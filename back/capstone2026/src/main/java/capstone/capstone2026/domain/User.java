@@ -1,6 +1,7 @@
 package capstone.capstone2026.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
@@ -11,9 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private String id;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -38,4 +38,21 @@ public class User {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @Builder
+    public User(String id, String email, String password, Integer age, String gender, String nickname, Double height, Double weight) {
+        this.id = id; // id를 직접 받도록 추가
+        this.email = email;
+        this.password = password;
+        this.age = age;
+        this.gender = gender;
+        this.nickname = nickname;
+        this.height = height;
+        this.weight = weight;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
