@@ -2,6 +2,7 @@ package capstone.capstone2026.controller;
 
 import capstone.capstone2026.domain.User;
 import capstone.capstone2026.dto.UserJoinRequest;
+import capstone.capstone2026.dto.UserJoinResponse; // 변경된 임포트
 import capstone.capstone2026.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +15,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public String join(@RequestBody UserJoinRequest dto) {
-        // DTO를 엔티티로 변환 (아까 User.java에 만든 Builder 사용)
+    // 반환 타입을 UserJoinResponse<String>으로 변경
+    public UserJoinResponse<String> join(@RequestBody UserJoinRequest dto) {
+        
         User user = User.builder()
                 .id(dto.getId())
                 .email(dto.getEmail())
@@ -27,9 +29,9 @@ public class UserController {
                 .weight(dto.getWeight())
                 .build();
 
-        userService.join(user);
-        return "회원가입이 완료되었습니다.";
+        String savedId = userService.join(user);
+        
+        // UserJoinResponse의 성공 메서드 호출
+        return UserJoinResponse.success("회원가입이 완료되었습니다.", savedId);
     }
-
-    // 로그인 컨트롤러 구현 
 }
