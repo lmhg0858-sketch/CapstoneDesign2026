@@ -29,9 +29,9 @@ public class UserController {
                 .weight(dto.getWeight())
                 .build();
 
-        String savedId = userService.join(user);
+        userService.join(user);
         
         // UserJoinResponse의 성공 메서드 호출
-        return UserJoinResponse.success("회원가입이 완료되었습니다.", savedId);
+        return UserJoinResponse.success("회원가입이 완료되었습니다.", user.getNickname());
     }
 }
