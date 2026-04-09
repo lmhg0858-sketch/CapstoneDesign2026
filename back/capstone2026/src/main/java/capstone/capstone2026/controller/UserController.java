@@ -2,10 +2,11 @@ package capstone.capstone2026.controller;
 
 import capstone.capstone2026.config.JwtUtil;
 import capstone.capstone2026.domain.User;
-import capstone.capstone2026.dto.JoinResponse;
+import capstone.capstone2026.dto.UserJoinResponse;
 import capstone.capstone2026.dto.LoginRequest;
 import capstone.capstone2026.dto.LoginResponse;
 import capstone.capstone2026.dto.UserJoinRequest;
+import capstone.capstone2026.dto.UserJoinResponse;
 import capstone.capstone2026.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +20,8 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public JoinResponse join(@RequestBody UserJoinRequest dto) {
-        // DTO를 엔티티로 변환 (아까 User.java에 만든 Builder 사용)
+    public UserJoinResponse<String> join(@RequestBody UserJoinRequest dto) {
+
         User user = User.builder()
                 .id(dto.getId())
                 .email(dto.getEmail())
@@ -32,11 +33,10 @@ public class UserController {
                 .weight(dto.getWeight())
                 .build();
 
-        String userId = userService.join(user);
-        return new JoinResponse(
-                "회원가입이 완료되었습니다",
-                userId
-        );
+        userService.join(user);
+
+        // UserJoinResponse의 성공 메서드 호출
+        return UserJoinResponse.success("회원가입이 완료되었습니다.", user.getNickname());
     }
 
     // 로그인 컨트롤러 구현

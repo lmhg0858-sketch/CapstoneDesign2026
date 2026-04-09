@@ -3,10 +3,10 @@ POST http://localhost:8080/api/auth/signup
 Content-Type: application/json
 
 {
-  "id": "test456",
-  "email": "test2@test.com",
+  "id": "test1115",
+  "email": "test55@test.com",
   "password": "1234",
-  "nickname": "철원2",
+  "nickname": "철원10",
   "age": 25,
   "gender": "male",
   "height": 175.5,
@@ -18,6 +18,6 @@ POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "id": "test123",
+  "id": "test777",
   "password": "1234"
 }

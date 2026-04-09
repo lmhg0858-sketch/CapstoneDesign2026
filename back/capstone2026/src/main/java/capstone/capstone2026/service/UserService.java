@@ -45,9 +45,26 @@ public class UserService {
     }
 
     private void validateDuplicateUser(User user) {
+        // 1. 아이디 중복 확인 (경고 발생 지점)
+        // user.getId()를 변수에 담아서 null이 아님을 확실히 하거나, Optional을 더 안전하게 씁니다.
+        String userId = user.getId();
+        if (userId != null) {
+            userRepository.findById(userId)
+                    .ifPresent(m -> {
+                        throw new IllegalStateException("이미 존재하는 아이디입니다.");
+                    });
+        }
+
+        // 2. 이메일 중복 확인
         userRepository.findByEmail(user.getEmail())
                 .ifPresent(m -> {
                     throw new IllegalStateException("이미 존재하는 이메일입니다.");
+                });
+
+        // 3. 닉네임 중복 확인
+        userRepository.findByNickname(user.getNickname())
+                .ifPresent(m -> {
+                    throw new IllegalStateException("이미 존재하는 닉네임입니다.");
                 });
     }
 
