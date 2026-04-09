@@ -7,13 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/join")
+    @PostMapping("/signup")
     public String join(@RequestBody UserJoinRequest dto) {
         // DTO를 엔티티로 변환 (아까 User.java에 만든 Builder 사용)
         User user = User.builder()
