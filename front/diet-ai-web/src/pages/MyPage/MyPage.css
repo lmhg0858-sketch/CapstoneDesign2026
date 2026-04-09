@@ -1,0 +1,12 @@
+﻿.list {
+  display: grid;
+  gap: 10px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #efe8df;
+  border: 1px solid #e0d8d0;
+}

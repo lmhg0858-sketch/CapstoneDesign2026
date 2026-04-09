@@ -1,0 +1,93 @@
+﻿.login-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(340px, 420px) minmax(360px, 1fr);
+  gap: 28px;
+  align-items: center;
+  padding: 24px 32px;
+  background: #efefef;
+}
+
+.login-page .auth-panel {
+  background: #efefef;
+  padding: 22px 24px;
+}
+
+.login-page .auth-title {
+  margin: 0 0 20px;
+  font-size: 30px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.login-page .auth-form {
+  display: grid;
+  gap: 6px;
+}
+
+.login-page .field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #1d1d1d;
+}
+
+.login-page .field input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  font-size: 12px;
+}
+
+.login-page .auth-submit {
+  width: 100%;
+  margin-top: 4px;
+  border-radius: 8px;
+  background: #3f5f29;
+  font-size: 13px;
+  padding: 10px 14px;
+}
+
+.login-page .auth-switch {
+  margin: 16px 0 0;
+  text-align: center;
+  font-size: 12px;
+}
+
+.login-page .auth-switch a {
+  color: #3552a5;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-page .auth-visual {
+  width: min(100%, 760px);
+  min-height: min(76vh, 620px);
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  justify-self: end;
+}
+
+@media (max-width: 1100px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .login-page .auth-panel {
+    padding: 18px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.86);
+  }
+
+  .login-page .auth-visual {
+    min-height: 300px;
+    border-radius: 16px;
+    width: 100%;
+  }
+}
