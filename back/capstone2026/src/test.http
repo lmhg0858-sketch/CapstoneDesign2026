@@ -1,0 +1,23 @@
+### 회원가입
+POST http://localhost:8080/api/auth/signup
+Content-Type: application/json
+
+{
+  "id": "test456",
+  "email": "test2@test.com",
+  "password": "1234",
+  "nickname": "철원2",
+  "age": 25,
+  "gender": "male",
+  "height": 175.5,
+  "weight": 70.0
+}
+
+### 로그인
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "id": "test123",
+  "password": "1234"
+}
