@@ -1,5 +1,6 @@
-﻿import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+﻿import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { clearAuthSession, isLoggedIn, notifyAuthStateChanged, subscribeAuthStateChange } from '../../lib/auth'
 import heroImage from '../../assets/login_signup.jpg'
 import './Home.css'
 
@@ -63,8 +64,12 @@ function formatAmount(value, unit) {
 }
 
 function Home() {
+  const navigate = useNavigate()
   const [selectedDisease, setSelectedDisease] = useState(DISEASE_OPTIONS[0].id)
+  const [loggedIn, setLoggedIn] = useState(() => isLoggedIn())
   const rows = NUTRIENT_BY_DISEASE[selectedDisease]
+
+  useEffect(() => subscribeAuthStateChange(setLoggedIn), [])
 
   const maxTarget = useMemo(() => rows.reduce((max, row) => Math.max(max, row.target), 1), [rows])
 
@@ -77,6 +82,13 @@ function Home() {
 
   const deficientNutrients = useMemo(() => rows.filter((row) => row.intake < row.target).slice(0, 3), [rows])
 
+  const handleLogout = () => {
+    clearAuthSession()
+    notifyAuthStateChanged()
+    alert('로그아웃되었습니다.')
+    navigate('/')
+  }
+
   return (
     <section className="home-page-v2">
       <section className="home-hero-v2" style={{ backgroundImage: `url(${heroImage})` }}>
@@ -88,10 +100,16 @@ function Home() {
             </Link>
             <nav className="home-header-v2__menu">
               <Link to="/mypage">마이페이지</Link>
-              <Link to="/signup">회원가입</Link>
-              <Link className="home-header-v2__login" to="/login">
-                로그인
-              </Link>
+              {!loggedIn ? <Link to="/signup">회원가입</Link> : null}
+              {loggedIn ? (
+                <button className="home-header-v2__login" onClick={handleLogout} type="button">
+                  로그아웃
+                </button>
+              ) : (
+                <Link className="home-header-v2__login" to="/login">
+                  로그인
+                </Link>
+              )}
             </nav>
           </header>
 

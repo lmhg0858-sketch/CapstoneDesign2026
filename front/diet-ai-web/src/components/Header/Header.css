@@ -32,6 +32,8 @@
 }
 
 .header__pill {
+  font-family: inherit;
+  color: inherit;
   background: #f8f8f8;
   border: 1px solid #cfcfcf;
   padding: 8px 14px;
@@ -46,3 +48,4 @@
   color: #fff;
   border-color: #0e0e0e;
 }
+

@@ -48,7 +48,11 @@
   gap: 32px;
 }
 
-.home-header-v2__menu a {
+.home-header-v2__menu a,
+.home-header-v2__menu button {
+  font-family: inherit;
+  background: transparent;
+  border: 0;
   color: #f3f3f3;
   text-decoration: none;
   font-size: 16px;
@@ -56,6 +60,7 @@
 }
 
 .home-header-v2__menu .home-header-v2__login {
+  cursor: pointer;
   border: 2px solid #ffffff;
   border-radius: 12px;
   padding: 12px 24px;
@@ -357,11 +362,16 @@
     gap: 12px;
   }
 
-  .home-header-v2__menu a {
+  .home-header-v2__menu a,
+.home-header-v2__menu button {
+  font-family: inherit;
+  background: transparent;
+  border: 0;
     font-size: 12px;
   }
 
   .home-header-v2__menu .home-header-v2__login {
+  cursor: pointer;
     padding: 8px 12px;
   }
 
@@ -382,5 +392,6 @@
     grid-template-columns: 1fr;
   }
 }
+
 
 

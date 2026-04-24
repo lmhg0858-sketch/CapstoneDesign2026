@@ -1,6 +1,7 @@
 ﻿import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { login } from '../../lib/api'
+import { notifyAuthStateChanged, saveAuthSession } from '../../lib/auth'
 import authImage from '../../assets/login_signup.jpg'
 import './Login.css'
 
@@ -39,8 +40,8 @@ function Login() {
         return
       }
 
-      localStorage.setItem('auth_token', response.token)
-      localStorage.setItem('auth_user_id', response.userId)
+      saveAuthSession({ token: response.token, userId: response.userId })
+      notifyAuthStateChanged()
 
       alert(`로그인 성공: ${message}`)
       navigate('/')
