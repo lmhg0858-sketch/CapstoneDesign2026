@@ -96,8 +96,8 @@
 }
 
 .signup-page .auth-visual {
-  width: min(100%, 760px);
-  min-height: min(76vh, 620px);
+  width: min(100%, 900px);
+  min-height: min(84vh, 720px);
   border-radius: 20px;
   background-size: cover;
   background-position: center;
@@ -118,8 +118,9 @@
   }
 
   .signup-page .auth-visual {
-    min-height: 300px;
+    min-height: 360px;
     border-radius: 16px;
     width: 100%;
   }
 }
+

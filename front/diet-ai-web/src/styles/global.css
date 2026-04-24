@@ -1,19 +1,18 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Marcellus&family=Noto+Sans+KR:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap');
 
 :root {
   color-scheme: light;
-  font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
-  color: #1f2322;
-  background: #f4f1ec;
-  --bg: #f4f1ec;
-  --ink: #1f2322;
-  --muted: #5d5f5e;
-  --line: #e4ddd3;
-  --card: #ffffff;
-  --accent: #3f5f29;
-  --accent-soft: #dbe3d6;
-  --sand: #f8f4ee;
-  --shadow: 0 10px 30px rgba(24, 28, 26, 0.08);
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #111;
+  background: #ececec;
+  --bg: #ececec;
+  --ink: #111;
+  --muted: #6b6b6b;
+  --line: #d5d5d5;
+  --card: #f8f8f8;
+  --accent: #0c0c0c;
+  --accent-soft: #f0f0f0;
+  --shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -27,19 +26,12 @@ body {
   background: var(--bg);
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(800px 400px at 20% -10%, #fff5e8 0%, transparent 60%),
-    radial-gradient(700px 500px at 90% 0%, #eef3ea 0%, transparent 55%),
-    linear-gradient(180deg, #f7f2ea 0%, #f3efe8 100%);
-}
-
 #root {
   min-height: 100vh;
+}
+
+a {
+  color: inherit;
 }
 
 .app-shell {
@@ -50,18 +42,12 @@ body::before {
 
 .app-content {
   padding: 28px 24px 40px;
-  width: min(1100px, 100%);
+  width: min(1160px, 100%);
   margin: 0 auto;
-  animation: page-in 0.4s ease-out;
+  animation: page-in 0.25s ease-out;
 }
 
-.app-content--auth {
-  width: 100%;
-  max-width: none;
-  margin: 0;
-  padding: 0;
-}
-
+.app-content--auth,
 .app-content--home {
   width: 100%;
   max-width: none;
@@ -72,7 +58,7 @@ body::before {
 @keyframes page-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -88,9 +74,8 @@ body::before {
 
 .page__title {
   margin: 0;
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 30px;
+  font-weight: 800;
 }
 
 .page__desc {
@@ -101,13 +86,13 @@ body::before {
 .card {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 12px;
   padding: 18px;
   box-shadow: var(--shadow);
 }
 
 .card--soft {
-  background: var(--sand);
+  background: #f2f2f2;
 }
 
 .grid {
@@ -117,18 +102,18 @@ body::before {
 }
 
 .panel {
-  background: #fffdf9;
-  border: 1px dashed #e2ddd6;
-  border-radius: 16px;
+  background: #f9f9f9;
+  border: 1px solid #d7d7d7;
+  border-radius: 12px;
   padding: 18px;
 }
 
 .primary,
 .ghost {
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 10px 14px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .button-link {
@@ -140,13 +125,14 @@ body::before {
 
 .primary {
   background: var(--accent);
-  color: white;
-  border: 0;
+  color: #fff;
+  border: 1px solid var(--accent);
 }
 
 .ghost {
-  background: transparent;
-  border: 1px solid #dcd6cf;
+  background: #f7f7f7;
+  border: 1px solid #cfcfcf;
+  color: #111;
 }
 
 .row {

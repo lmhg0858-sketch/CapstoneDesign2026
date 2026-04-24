@@ -6,7 +6,6 @@ import Signup from '../pages/Signup'
 import Diet from '../pages/Diet'
 import Ranking from '../pages/Ranking'
 import MyPage from '../pages/MyPage'
-import FoodAnalyze from '../pages/FoodAnalyze'
 
 export const router = createBrowserRouter([
   {
@@ -19,7 +18,6 @@ export const router = createBrowserRouter([
       { path: 'diet', element: <Diet /> },
       { path: 'ranking', element: <Ranking /> },
       { path: 'mypage', element: <MyPage /> },
-      { path: 'analyze', element: <FoodAnalyze /> },
     ],
   },
 ])

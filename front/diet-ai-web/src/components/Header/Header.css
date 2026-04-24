@@ -2,13 +2,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 24px;
-  border-bottom: 1px solid #e6e2dd;
-  background: rgba(255, 253, 249, 0.85);
-  backdrop-filter: blur(6px);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  padding: 16px 24px;
+  border-top: 3px solid #5a99ff;
+  border-bottom: 1px solid #d5d5d5;
+  background: #ededed;
 }
 
 .header__brand {
@@ -18,32 +15,34 @@
 }
 
 .header__logo {
-  font-family: 'Marcellus', serif;
-  font-size: 22px;
-  letter-spacing: 0.5px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
 }
 
 .header__tag {
   font-size: 12px;
-  color: #6a6a6a;
+  color: #666;
 }
 
 .header__right {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .header__pill {
-  background: #f0ece6;
-  border: 1px solid #e0dbd4;
-  padding: 8px 12px;
-  border-radius: 999px;
+  background: #f8f8f8;
+  border: 1px solid #cfcfcf;
+  padding: 8px 14px;
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .header__pill--dark {
-  background: #2f3e34;
+  background: #0e0e0e;
   color: #fff;
-  border: 0;
+  border-color: #0e0e0e;
 }
