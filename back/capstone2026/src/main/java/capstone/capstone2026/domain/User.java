@@ -1,11 +1,11 @@
 package capstone.capstone2026.domain;
-
+import lombok.Setter;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
-
+@Setter
 @Entity
 @Table(name = "users")
 @Getter

@@ -14,6 +14,8 @@ const DISEASE_OPTIONS = [
 function Signup() {
   const navigate = useNavigate()
   const [name, setName] = useState('')
+  const [nickname, setNickname] = useState('')
+  const [email, setEmail] = useState('')
   const [gender, setGender] = useState('')
   const [age, setAge] = useState('')
   const [id, setId] = useState('')
@@ -42,7 +44,15 @@ function Signup() {
     setMessage('')
     setError('')
 
-    if (!name.trim() || !gender.trim() || !age.trim() || !id.trim() || !password.trim()) {
+    if (
+      !name.trim() ||
+      !nickname.trim() ||
+      !email.trim() ||
+      !gender.trim() ||
+      !age.trim() ||
+      !id.trim() ||
+      !password.trim()
+    ) {
       setError('기본 정보를 모두 입력해 주세요.')
       return
     }
@@ -70,6 +80,8 @@ function Signup() {
     try {
       await signup({
         name: name.trim(),
+        nickname: nickname.trim(),
+        email: email.trim(),
         gender: gender.trim(),
         age: parsedAge,
         height: parsedHeight,
@@ -101,6 +113,24 @@ function Signup() {
               placeholder="이름을 입력하세요"
               type="text"
               value={name}
+            />
+          </label>
+          <label className="field">
+            <span>닉네임</span>
+            <input
+              onChange={(event) => setNickname(event.target.value)}
+              placeholder="닉네임을 입력하세요"
+              type="text"
+              value={nickname}
+            />
+          </label>
+          <label className="field">
+            <span>e-mail</span>
+            <input
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="example@email.com"
+              type="email"
+              value={email}
             />
           </label>
 

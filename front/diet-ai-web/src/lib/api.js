@@ -26,14 +26,14 @@ async function request(path, options = {}) {
 }
 
 export function login(payload) {
-  return request('/auth/login', {
+  return request('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify(payload),
   })
 }
 
 export function signup(payload) {
-  return request('/auth/signup', {
+  return request('/api/auth/signup', {
     method: 'POST',
     body: JSON.stringify(payload),
   })
