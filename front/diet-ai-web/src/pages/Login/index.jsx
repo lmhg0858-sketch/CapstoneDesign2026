@@ -1,6 +1,7 @@
 ﻿import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { login } from '../../lib/api'
+import { notifyAuthStateChanged, saveAuthSession } from '../../lib/auth'
 import authImage from '../../assets/login_signup.jpg'
 import './Login.css'
 
@@ -9,31 +10,45 @@ function Login() {
   const [id, setId] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    setMessage('')
     setError('')
 
     if (!id.trim() || !password.trim()) {
-      setError('ID와 비밀번호를 모두 입력해 주세요.')
+      const message = 'ID와 비밀번호를 모두 입력해 주세요.'
+      setError(message)
+      alert(message)
       return
     }
 
     setIsLoading(true)
 
     try {
-      await login({
+      const response = await login({
         id: id.trim(),
         password,
       })
 
-      setMessage('로그인 성공! 홈으로 이동합니다.')
+      const isSuccess = Boolean(response?.token) && Boolean(response?.userId)
+      const message = response?.message || (isSuccess ? '로그인에 성공했습니다.' : '로그인에 실패했습니다.')
+
+      if (!isSuccess) {
+        setError(message)
+        alert(`로그인 실패: ${message}`)
+        return
+      }
+
+      saveAuthSession({ token: response.token, userId: response.userId })
+      notifyAuthStateChanged()
+
+      alert(`로그인 성공: ${message}`)
       navigate('/')
     } catch (requestError) {
-      setError(requestError.message || '로그인에 실패했습니다.')
+      const message = requestError.message || '로그인에 실패했습니다.'
+      setError(message)
+      alert(`로그인 실패: ${message}`)
     } finally {
       setIsLoading(false)
     }
@@ -64,7 +79,6 @@ function Login() {
             />
           </label>
 
-          {message ? <p className="form-feedback success">{message}</p> : null}
           {error ? <p className="form-feedback error">{error}</p> : null}
 
           <button className="primary auth-submit" disabled={isLoading} type="submit">

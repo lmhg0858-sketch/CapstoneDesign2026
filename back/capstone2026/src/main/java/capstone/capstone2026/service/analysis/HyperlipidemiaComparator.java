@@ -11,18 +11,13 @@ public class HyperlipidemiaComparator implements DiseaseComparator {
 
     @Override
     public String evaluate(FoodAnalysisRequest.NutrientData n, User user) {
-        double fat = n.getFat();
-        double cholesterol = n.getCholesterol();
-        double sodium = n.getSodium();
-        String gender = user.getGender(); // "남성" 또는 "여성" 가정
+        boolean isMale = "MALE".equalsIgnoreCase(user.getGender()) || "남성".equals(user.getGender());
+        double fatDanger = isMale ? 50.0 : 40.0;
+        double fatCaution = isMale ? 25.0 : 20.0;
 
-        // 1. 지방 기준 (남성: 25/50, 여성: 20/40)
-        double fatDanger = gender.equals("남성") ? 50.0 : 40.0;
-        double fatCaution = gender.equals("남성") ? 25.0 : 20.0;
+        if (n.getFat() >= fatDanger || n.getCholesterol() >= 120 || n.getSodium() >= 1200) return "위험";
+        if (n.getFat() >= fatCaution || n.getCholesterol() >= 60 || n.getSodium() >= 600) return "주의";
 
-        if (fat >= fatDanger || cholesterol >= 120 || sodium >= 1200) return "위험";
-        if (fat >= fatCaution || cholesterol >= 60 || sodium >= 600) return "주의";
-        
         return "안전";
     }
 }

@@ -24,7 +24,6 @@ function Signup() {
   const [weight, setWeight] = useState('')
   const [chronicDiseases, setChronicDiseases] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState('')
   const [error, setError] = useState('')
 
   const handleDiseaseChange = (event) => {
@@ -41,7 +40,6 @@ function Signup() {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    setMessage('')
     setError('')
 
     if (
@@ -53,12 +51,16 @@ function Signup() {
       !id.trim() ||
       !password.trim()
     ) {
-      setError('기본 정보를 모두 입력해 주세요.')
+      const message = '기본 정보를 모두 입력해 주세요.'
+      setError(message)
+      alert(message)
       return
     }
 
     if (!height.trim() || !weight.trim()) {
-      setError('키와 몸무게를 입력해 주세요.')
+      const message = '키와 몸무게를 입력해 주세요.'
+      setError(message)
+      alert(message)
       return
     }
 
@@ -71,14 +73,16 @@ function Signup() {
       !Number.isFinite(parsedHeight) ||
       !Number.isFinite(parsedWeight)
     ) {
-      setError('나이, 키, 몸무게는 숫자로 입력해 주세요.')
+      const message = '나이, 키, 몸무게는 숫자로 입력해 주세요.'
+      setError(message)
+      alert(message)
       return
     }
 
     setIsLoading(true)
 
     try {
-      await signup({
+      const response = await signup({
         name: name.trim(),
         nickname: nickname.trim(),
         email: email.trim(),
@@ -91,10 +95,21 @@ function Signup() {
         password,
       })
 
-      setMessage('회원가입 성공! 로그인 페이지로 이동합니다.')
+      const isSuccess = response?.success === true
+      const message = response?.message || (isSuccess ? '회원가입이 완료되었습니다.' : '회원가입에 실패했습니다.')
+
+      if (!isSuccess) {
+        setError(message)
+        alert(`회원가입 실패: ${message}`)
+        return
+      }
+
+      alert(`회원가입 성공: ${message}`)
       navigate('/login')
     } catch (requestError) {
-      setError(requestError.message || '회원가입에 실패했습니다.')
+      const message = requestError.message || '회원가입에 실패했습니다.'
+      setError(message)
+      alert(`회원가입 실패: ${message}`)
     } finally {
       setIsLoading(false)
     }
@@ -217,7 +232,6 @@ function Signup() {
             </div>
           </fieldset>
 
-          {message ? <p className="form-feedback success">{message}</p> : null}
           {error ? <p className="form-feedback error">{error}</p> : null}
 
           <button className="primary auth-submit" disabled={isLoading} type="submit">

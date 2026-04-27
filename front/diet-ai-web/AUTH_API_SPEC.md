@@ -25,6 +25,8 @@
 ```json
 {
   "name": "string",
+  "nickname": "string",
+  "email": "string",
   "gender": "MALE",
   "age": 25,
   "height": 170,

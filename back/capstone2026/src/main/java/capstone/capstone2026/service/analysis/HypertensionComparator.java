@@ -11,16 +11,12 @@ public class HypertensionComparator implements DiseaseComparator {
 
     @Override
     public String evaluate(FoodAnalysisRequest.NutrientData n, User user) {
-        double sodium = n.getSodium();
-        double chol = n.getCholesterol();
-        double kcal = n.getKcal();
-        String gender = user.getGender();
+        boolean isMale = "MALE".equalsIgnoreCase(user.getGender()) || "남성".equals(user.getGender());
+        double kcalDanger = isMale ? 1200.0 : 900.0;
+        double kcalCaution = isMale ? 800.0 : 600.0;
 
-        double kcalDanger = gender.equals("남성") ? 1200 : 900;
-        double kcalCaution = gender.equals("남성") ? 800 : 600;
-
-        if (sodium >= 1000 || chol >= 150 || kcal >= kcalDanger) return "위험";
-        if (sodium >= 666 || chol >= 100 || kcal >= kcalCaution) return "주의";
+        if (n.getSodium() >= 1000 || n.getCholesterol() >= 150 || n.getKcal() >= kcalDanger) return "위험";
+        if (n.getSodium() >= 666 || n.getCholesterol() >= 100 || n.getKcal() >= kcalCaution) return "주의";
 
         return "안전";
     }
