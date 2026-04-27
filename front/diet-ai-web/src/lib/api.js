@@ -1,9 +1,10 @@
-﻿const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+﻿const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL || 'http://localhost:8080'
+const AI_BASE_URL = import.meta.env.VITE_AI_API_BASE_URL || 'http://localhost:8000'
 
 const API_PATHS = {
   login: '/api/auth/login',
   signup: '/api/auth/signup',
-  analyzeMeal: '/api/meals/analyze',
+  analyzeMeal: import.meta.env.VITE_AI_ANALYZE_PATH || '/api/meals/analyze',
   me: '/api/users/me',
   recentMeals: '/api/meals/recent',
   meals: '/api/meals',
@@ -21,13 +22,13 @@ function joinApiUrl(baseUrl, path) {
   return `${normalizedBase}${normalizedPath}`
 }
 
-async function request(path, options = {}) {
+async function request(baseUrl, path, options = {}) {
   const headers = {
     'Content-Type': 'application/json',
     ...(options.headers || {}),
   }
 
-  const response = await fetch(joinApiUrl(API_BASE_URL, path), {
+  const response = await fetch(joinApiUrl(baseUrl, path), {
     ...options,
     headers,
   })
@@ -49,43 +50,43 @@ async function request(path, options = {}) {
 }
 
 export function login(payload) {
-  return request(API_PATHS.login, {
+  return request(BACKEND_BASE_URL, API_PATHS.login, {
     method: 'POST',
     body: JSON.stringify(payload),
   })
 }
 
 export function signup(payload) {
-  return request(API_PATHS.signup, {
+  return request(BACKEND_BASE_URL, API_PATHS.signup, {
     method: 'POST',
     body: JSON.stringify(payload),
   })
 }
 
 export function analyzeFoodImage(payload) {
-  return request(API_PATHS.analyzeMeal, {
+  return request(AI_BASE_URL, API_PATHS.analyzeMeal, {
     method: 'POST',
     body: JSON.stringify(payload),
   })
 }
 
 export function getMyProfile() {
-  return request(API_PATHS.me)
+  return request(BACKEND_BASE_URL, API_PATHS.me)
 }
 
 export function updateMyProfile(payload) {
-  return request(API_PATHS.me, {
+  return request(BACKEND_BASE_URL, API_PATHS.me, {
     method: 'PUT',
     body: JSON.stringify(payload),
   })
 }
 
 export function getRecentMeals() {
-  return request(API_PATHS.recentMeals)
+  return request(BACKEND_BASE_URL, API_PATHS.recentMeals)
 }
 
 export function createMeal(payload) {
-  return request(API_PATHS.meals, {
+  return request(BACKEND_BASE_URL, API_PATHS.meals, {
     method: 'POST',
     body: JSON.stringify(payload),
   })

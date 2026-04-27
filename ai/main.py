@@ -19,26 +19,12 @@ analysis_service = AnalysisService()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# [Step 5: 백엔드 역할 시뮬레이션 API]
-@app.post("/api/backend/risk-check")
-async def mock_external_backend(payload: dict):
-    print(f"\n📥 [백엔드 서버] AI 서버로부터 네트워크 요청을 수신함!")
-    foods = payload.get("detectedFoods", [])
-    return {
-        "user_diseases": ["고혈압", "당뇨"],
-        "analysis_results": [
-            {
-                "food_name": f["food_name"],
-                "risk_level": "위험" if f["nutrient_name"].get("sodium", 0) > 800 else "안전"
-            } for f in foods
-        ]
-    }
 
 # [핵심 엔드포인트]
 @app.post("/api/meals/analyze")
