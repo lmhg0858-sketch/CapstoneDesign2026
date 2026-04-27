@@ -19,7 +19,7 @@ analysis_service = AnalysisService()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173/"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -56,7 +56,7 @@ async def analyze_food(data: dict):
 
     try:
         async with httpx.AsyncClient() as client:
-            backend_url = "http://127.0.0.1:8080/api/meals/analyze"
+            backend_url = "http://127.0.0.1:8080/api/meals/analyze?userId=diseasetest"
             response = await client.post(
                 backend_url, 
                 json={"detectedFoods": meal_data_to_send},
