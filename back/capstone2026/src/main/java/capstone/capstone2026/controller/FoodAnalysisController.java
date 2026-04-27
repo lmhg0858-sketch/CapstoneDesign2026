@@ -3,6 +3,8 @@ package capstone.capstone2026.controller;
 import capstone.capstone2026.domain.User;
 import capstone.capstone2026.dto.FoodAnalysisRequest;
 import capstone.capstone2026.dto.FoodAnalysisResponse;
+import capstone.capstone2026.repository.UserDiseaseRepository;
+import capstone.capstone2026.repository.UserRepository;
 import capstone.capstone2026.service.FoodAnalysisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +18,22 @@ import java.util.List;
 public class FoodAnalysisController {
 
     private final FoodAnalysisService foodAnalysisService;
+    private final UserRepository userRepository;
+    private final UserDiseaseRepository userDiseaseRepository;
 
     @PostMapping("/analyze")
-    public FoodAnalysisResponse analyze(@RequestBody FoodAnalysisRequest request) {
-        // [테스트용] 실제 로그인 기능 연결 전까지 사용할 가짜 유저 데이터
-        User mockUser = new User();
-        mockUser.setHeight(70.0); // 단백질 계산용 (체중 필드 대신 사용 중인 경우)
-        mockUser.setGender("남성");
-        
-        // [테스트용] 이 유저가 가졌다고 가정할 질병 리스트
-        List<String> mockDiseases = Arrays.asList("당뇨", "고혈압", "신장질환"); 
+    public FoodAnalysisResponse analyze(
+            @RequestParam String userId,
+            @RequestBody FoodAnalysisRequest request
+    ) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        return foodAnalysisService.analyzeFood(mockUser, mockDiseases, request);
+        List<String> userDiseases = userDiseaseRepository.findByUser_Id(userId)
+                .stream()
+                .map(userDisease -> userDisease.getDisease().getName())
+                .toList();
+
+        return foodAnalysisService.analyzeFood(user, userDiseases, request);
     }
 }
