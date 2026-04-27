@@ -18,5 +18,5 @@ public class UserJoinResponse<T> {
     // 실패 응답 정적 팩토리 메서드
     public static <T> UserJoinResponse<Void> error(String message) {
         return new UserJoinResponse<>(false, message, null);
-    }
+    } 
 }

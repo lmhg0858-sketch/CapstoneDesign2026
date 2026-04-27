@@ -1,0 +1,397 @@
+﻿.home-page-v2 {
+  min-height: 100vh;
+  background: #ececec;
+  color: #0f0f0f;
+}
+
+.home-hero-v2 {
+  position: relative;
+  min-height: 78vh;
+  background-size: cover;
+  background-position: center;
+  border-top: 3px solid #5a99ff;
+  border-bottom: 3px solid #5a99ff;
+}
+
+.home-hero-v2__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(24, 24, 24, 0.34);
+}
+
+.home-hero-v2__content {
+  position: relative;
+  z-index: 1;
+  min-height: 78vh;
+  padding: 38px 52px;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-header-v2 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-header-v2__brand {
+  text-decoration: none;
+  color: #f8f8f8;
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.home-header-v2__menu {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.home-header-v2__menu a,
+.home-header-v2__menu button {
+  font-family: inherit;
+  background: transparent;
+  border: 0;
+  color: #f3f3f3;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.home-header-v2__menu .home-header-v2__login {
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  border-radius: 12px;
+  padding: 12px 24px;
+}
+
+.home-hero-v2__center {
+  margin: auto;
+  text-align: center;
+  color: #ffffff;
+}
+
+.home-hero-v2__center h1 {
+  margin: 0;
+  font-size: clamp(40px, 5.2vw, 78px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.home-hero-v2__center p {
+  margin: 22px 0 0;
+  font-size: clamp(16px, 1.7vw, 26px);
+  font-weight: 600;
+}
+
+.home-hero-v2__cta {
+  margin-top: 22px;
+  display: inline-flex;
+  text-decoration: none;
+  color: #ffffff;
+  background: #080808;
+  border: 1px solid #080808;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: clamp(24px, 2.7vw, 36px);
+  font-weight: 800;
+}
+
+.home-dashboard {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0;
+  background: #ececec;
+  border-top: 1px solid #d7d7d7;
+}
+
+.dashboard-card {
+  background: #f1f1f1;
+  border-right: 1px solid #d8d8d8;
+  padding: 28px 22px 24px;
+  min-height: 430px;
+}
+
+.dashboard-card:last-child {
+  border-right: 0;
+}
+
+.dashboard-card h2 {
+  margin: 0;
+  font-size: clamp(38px, 2.9vw, 56px);
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.dashboard-card__head {
+  display: grid;
+  gap: 14px;
+}
+
+.disease-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  border: 1px solid #bdbdbd;
+  background: #fafafa;
+  color: #121212;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tab--active {
+  background: #0e0e0e;
+  color: #ffffff;
+  border-color: #0e0e0e;
+}
+
+.nutrient-layout {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.target-chart,
+.intake-chart {
+  border: 1px solid #d3d3d3;
+  border-radius: 10px;
+  background: #fcfcfc;
+  padding: 12px;
+}
+
+.target-chart h3,
+.intake-chart h3 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+.target-chart__bars {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  min-height: 180px;
+}
+
+.target-bar {
+  flex: 1;
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+}
+
+.target-bar__track {
+  height: 150px;
+  width: min(100%, 52px);
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+  display: flex;
+  align-items: end;
+  overflow: hidden;
+  background: #ededed;
+}
+
+.target-bar__fill {
+  width: 100%;
+  background: linear-gradient(180deg, #75a8ff, #2f5ea8);
+}
+
+.target-bar__label {
+  font-size: 11px;
+  color: #444;
+  text-align: center;
+  line-height: 1.15;
+}
+
+.intake-chart ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.intake-chart__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.intake-chart__track {
+  margin-top: 4px;
+  height: 9px;
+  background: #dfdfdf;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.intake-chart__fill {
+  height: 100%;
+  background: #111111;
+}
+
+.intake-chart__summary {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ranking-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 10px;
+}
+
+.ranking-badge {
+  justify-self: center;
+  font-size: 82px;
+  line-height: 1;
+}
+
+.ranking-card dl {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ranking-card dl div {
+  border: 1px solid #d3d3d3;
+  background: #fbfbfb;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.ranking-card dt {
+  font-size: 12px;
+  color: #666;
+}
+
+.ranking-card dd {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.recommend-card {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 10px;
+}
+
+.recommend-subtitle {
+  margin: 0;
+  color: #4b4b4b;
+  font-size: 13px;
+}
+
+.recommend-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recommend-chips span {
+  border: 1px solid #cacaca;
+  background: #f8f8f8;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.recommend-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.dashboard-link {
+  display: inline-flex;
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 8px;
+  background: #0c0c0c;
+  color: #fff;
+  border: 1px solid #0c0c0c;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 1400px) {
+  .home-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card {
+    border-right: 0;
+    border-bottom: 1px solid #d8d8d8;
+  }
+
+  .dashboard-card:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .home-hero-v2,
+  .home-hero-v2__content {
+    min-height: 68vh;
+  }
+
+  .home-hero-v2__content {
+    padding: 20px 16px 24px;
+  }
+
+  .home-header-v2__brand {
+    font-size: 32px;
+  }
+
+  .home-header-v2__menu {
+    gap: 12px;
+  }
+
+  .home-header-v2__menu a,
+.home-header-v2__menu button {
+  font-family: inherit;
+  background: transparent;
+  border: 0;
+    font-size: 12px;
+  }
+
+  .home-header-v2__menu .home-header-v2__login {
+  cursor: pointer;
+    padding: 8px 12px;
+  }
+
+  .home-hero-v2__center h1 {
+    font-size: 40px;
+  }
+
+  .home-hero-v2__center p {
+    font-size: 16px;
+  }
+
+  .home-hero-v2__cta {
+    font-size: 22px;
+    padding: 10px 16px;
+  }
+
+  .nutrient-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+

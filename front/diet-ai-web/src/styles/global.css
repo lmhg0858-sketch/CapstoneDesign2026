@@ -1,0 +1,154 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap');
+
+:root {
+  color-scheme: light;
+  font-family: 'Noto Sans KR', sans-serif;
+  color: #111;
+  background: #ececec;
+  --bg: #ececec;
+  --ink: #111;
+  --muted: #6b6b6b;
+  --line: #d5d5d5;
+  --card: #f8f8f8;
+  --accent: #0c0c0c;
+  --accent-soft: #f0f0f0;
+  --shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  padding: 28px 24px 40px;
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  animation: page-in 0.25s ease-out;
+}
+
+.app-content--auth,
+.app-content--home {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page__title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.page__desc {
+  margin: 0;
+  color: var(--muted);
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+.card--soft {
+  background: #f2f2f2;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.panel {
+  background: #f9f9f9;
+  border: 1px solid #d7d7d7;
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.primary,
+.ghost {
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+
+.ghost {
+  background: #f7f7f7;
+  border: 1px solid #cfcfcf;
+  color: #111;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.form-feedback {
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+
+.form-feedback.success {
+  color: #1f6d39;
+}
+
+.form-feedback.error {
+  color: #c0372c;
+}
