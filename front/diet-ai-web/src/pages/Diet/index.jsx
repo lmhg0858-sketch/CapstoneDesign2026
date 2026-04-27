@@ -8,12 +8,16 @@ const RISK_LABEL_MAP = {
   danger: '위험',
 }
 
-const DEFAULT_NUTRITION_KEYS = [
-  '열량(kcal)',
-  '탄수화물(g)',
-  '단백질(g)',
-  '지방(g)',
-  '나트륨(mg)',
+const NUTRIENT_FIELD_MAP = [
+  { key: 'kcal', label: '열량', unit: 'kcal' },
+  { key: 'carbs', label: '탄수화물', unit: 'g' },
+  { key: 'protein', label: '단백질', unit: 'g' },
+  { key: 'fat', label: '지방', unit: 'g' },
+  { key: 'sugar', label: '당류', unit: 'g' },
+  { key: 'sodium', label: '나트륨', unit: 'mg' },
+  { key: 'cholesterol', label: '콜레스테롤', unit: 'mg' },
+  { key: 'kalium', label: '칼륨', unit: 'mg' },
+  { key: 'phos', label: '인', unit: 'mg' },
 ]
 
 function readFileAsDataUrl(file) {
@@ -75,6 +79,38 @@ function getPositionPercent(x, y, naturalWidth, naturalHeight) {
   }
 }
 
+function getMarkerPosition(item, naturalWidth, naturalHeight) {
+  const polygon = Array.isArray(item.coordinates) ? item.coordinates : null
+
+  if (polygon && polygon.length) {
+    const points = polygon.map((point) => ({
+      x: normalizeCoordinate(point?.x),
+      y: normalizeCoordinate(point?.y),
+    }))
+
+    const center = points.reduce(
+      (acc, point) => ({
+        x: acc.x + point.x,
+        y: acc.y + point.y,
+      }),
+      { x: 0, y: 0 }
+    )
+
+    return getPositionPercent(
+      center.x / points.length,
+      center.y / points.length,
+      naturalWidth,
+      naturalHeight
+    )
+  }
+
+  const coordinate = item.coordinates || item.coordinate || {}
+  const x = normalizeCoordinate(coordinate.x)
+  const y = normalizeCoordinate(coordinate.y)
+
+  return getPositionPercent(x, y, naturalWidth, naturalHeight)
+}
+
 function Diet() {
   const [file, setFile] = useState(null)
   const [previewUrl, setPreviewUrl] = useState('')
@@ -91,13 +127,16 @@ function Diet() {
     if (!detectedItems.length) return []
 
     return detectedItems.map((item) => {
-      const nutrition = item.nutrition || {}
+      const nutrition = item.nutrient_name || item.nutrition || {}
 
       return {
         foodName: item.food_name,
-        values: DEFAULT_NUTRITION_KEYS.map((key) => ({
-          key,
-          value: nutrition[key] ?? '-',
+        values: NUTRIENT_FIELD_MAP.map((field) => ({
+          key: field.label,
+          value:
+            typeof nutrition[field.key] === 'number'
+              ? `${nutrition[field.key]} ${field.unit}`
+              : '-',
         })),
       }
     })
@@ -190,12 +229,8 @@ function Diet() {
                 src={previewUrl}
               />
               {detectedItems.map((item, index) => {
-                const coordinate = item.coordinates || item.coordinate || {}
-                const x = normalizeCoordinate(coordinate.x)
-                const y = normalizeCoordinate(coordinate.y)
-                const { xPercent, yPercent } = getPositionPercent(
-                  x,
-                  y,
+                const { xPercent, yPercent } = getMarkerPosition(
+                  item,
                   imageNaturalSize.width,
                   imageNaturalSize.height
                 )
