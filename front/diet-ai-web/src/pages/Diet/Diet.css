@@ -6,6 +6,7 @@
 .diet-upload {
   display: grid;
   gap: 12px;
+  animation: diet-fade-up 0.72s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .diet-upload__dropzone {
@@ -19,6 +20,16 @@
   color: #6a6a6a;
   overflow: hidden;
   cursor: pointer;
+  transition:
+    transform 0.32s ease,
+    box-shadow 0.32s ease,
+    border-color 0.32s ease;
+}
+
+.diet-upload__dropzone:hover {
+  transform: translateY(-2px);
+  border-color: rgba(38, 153, 137, 0.28);
+  box-shadow: 0 18px 32px rgba(25, 98, 92, 0.08);
 }
 
 .diet-upload__dropzone img {
@@ -34,6 +45,16 @@
 
 .diet-upload__button {
   width: fit-content;
+  justify-self: center;
+  background: #2563eb;
+  border-color: #2563eb;
+  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.22);
+}
+
+.diet-upload__button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 18px 30px rgba(29, 78, 216, 0.26);
 }
 
 .diet-loading {
@@ -41,6 +62,7 @@
   place-items: center;
   gap: 10px;
   min-height: 160px;
+  animation: diet-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .diet-loading__spinner {
@@ -48,7 +70,7 @@
   height: 38px;
   border-radius: 999px;
   border: 4px solid #d8ddd8;
-  border-top-color: #3f5f29;
+  border-top-color: #1f8d7d;
   animation: diet-spin 1s linear infinite;
 }
 
@@ -61,6 +83,7 @@
 .diet-result {
   display: grid;
   gap: 20px;
+  animation: diet-fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .diet-result__top {
@@ -74,6 +97,7 @@
   border-radius: 12px;
   overflow: hidden;
   background: #f2f2f2;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.68);
 }
 
 .diet-result__image-wrap img {
@@ -95,6 +119,7 @@
   min-width: 72px;
   text-align: center;
   box-shadow: 0 8px 14px rgba(0, 0, 0, 0.16);
+  animation: diet-marker-pop 0.45s ease-out both;
 }
 
 .diet-marker--safe {
@@ -120,6 +145,16 @@
   border-radius: 12px;
   padding: 14px;
   background: #fff;
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.diet-score:hover,
+.diet-advice:hover,
+.diet-nutrition-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 28px rgba(21, 34, 57, 0.08);
 }
 
 .diet-score h2,
@@ -162,6 +197,7 @@
   border-radius: 10px;
   padding: 10px;
   background: #fff;
+  animation: diet-fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .diet-nutrition-card h3 {
@@ -192,5 +228,27 @@
 
   .diet-result__image-wrap img {
     max-height: 320px;
+  }
+}
+
+@keyframes diet-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes diet-marker-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -88%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%) scale(1);
   }
 }

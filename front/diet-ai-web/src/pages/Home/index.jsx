@@ -81,6 +81,7 @@ function Home() {
   }, [rows])
 
   const deficientNutrients = useMemo(() => rows.filter((row) => row.intake < row.target).slice(0, 3), [rows])
+  const heroHighlights = rows.slice(0, 3)
 
   const handleLogout = () => {
     clearAuthSession()
@@ -93,6 +94,8 @@ function Home() {
     <section className="home-page-v2">
       <section className="home-hero-v2" style={{ backgroundImage: `url(${heroImage})` }}>
         <div className="home-hero-v2__overlay" />
+        <div className="home-hero-v2__ambient home-hero-v2__ambient--left" />
+        <div className="home-hero-v2__ambient home-hero-v2__ambient--right" />
         <div className="home-hero-v2__content">
           <header className="home-header-v2">
             <Link className="home-header-v2__brand" to="/">
@@ -114,19 +117,39 @@ function Home() {
           </header>
 
           <div className="home-hero-v2__center">
+            <span className="home-hero-v2__eyebrow">Personal Nutrition Intelligence</span>
             <h1>NutriGuide</h1>
             <p>만성질환자를 위한 맞춤 식단 관리와 AI 영양 분석 서비스를 제공합니다.</p>
-            <Link className="home-hero-v2__cta" to="/diet">
-              식단 기록하기
-            </Link>
+            <div className="home-hero-v2__actions">
+              <Link className="home-hero-v2__cta" to="/diet">
+                식단 기록하기
+              </Link>
+              <Link className="home-hero-v2__secondary" to="/ranking">
+                내 랭킹 보기
+              </Link>
+            </div>
+          </div>
+
+          <div className="home-hero-v2__highlights">
+            {heroHighlights.map((row, index) => (
+              <article className="hero-highlight" key={row.name} style={{ animationDelay: `${0.18 * index}s` }}>
+                <span className="hero-highlight__label">{row.name}</span>
+                <strong>{formatAmount(row.intake, row.unit)}</strong>
+                <small>목표 {formatAmount(row.target, row.unit)}</small>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
       <section className="home-dashboard">
-        <article className="dashboard-card nutrient-card">
+        <article className="dashboard-card nutrient-card dashboard-card--feature">
           <div className="dashboard-card__head">
-            <h2>하루누적영양소</h2>
+            <span className="dashboard-card__eyebrow">Daily Focus</span>
+            <h2>하루 누적 영양소</h2>
+            <p className="dashboard-card__lead">
+              질환별 핵심 영양소를 한 화면에서 비교하고, 오늘 내가 얼마나 채웠는지 즉시 확인합니다.
+            </p>
             <div className="disease-tabs" role="tablist" aria-label="질환 선택">
               {DISEASE_OPTIONS.map((item) => (
                 <button
@@ -185,7 +208,9 @@ function Home() {
         </article>
 
         <article className="dashboard-card ranking-card">
+          <span className="dashboard-card__eyebrow">Momentum</span>
           <h2>랭킹</h2>
+          <p className="dashboard-card__lead">지속적인 기록과 균형 잡힌 식단이 순위로 이어집니다.</p>
           <div className="ranking-badge" aria-hidden="true">
             🏅
           </div>
@@ -209,6 +234,7 @@ function Home() {
         </article>
 
         <article className="dashboard-card recommend-card">
+          <span className="dashboard-card__eyebrow">Recommendation</span>
           <h2>식단추천</h2>
           <p className="recommend-subtitle">현재 부족한 영양소 우선으로 추천해드려요.</p>
           <div className="recommend-chips">
