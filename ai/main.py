@@ -56,7 +56,7 @@ async def analyze_food(data: dict):
 
     try:
         async with httpx.AsyncClient() as client:
-            backend_url = "http://127.0.0.1:8080/api/meals/analyze?userId=diseasetest"
+            backend_url = "http://127.0.0.1:8080/api/meals/analyze?userId=myid123"
             response = await client.post(
                 backend_url, 
                 json={"detectedFoods": meal_data_to_send},

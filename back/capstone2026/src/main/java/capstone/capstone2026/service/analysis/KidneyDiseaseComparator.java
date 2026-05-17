@@ -2,26 +2,29 @@ package capstone.capstone2026.service.analysis;
 
 import capstone.capstone2026.domain.User;
 import capstone.capstone2026.dto.FoodAnalysisRequest;
+import capstone.capstone2026.dto.AnalysisResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KidneyDiseaseComparator implements DiseaseComparator {
-    @Override
-    public String getDiseaseName() { return "신장질환"; }
+    @Override public String getDiseaseName() { return "신장질환"; }
 
     @Override
-    public String evaluate(FoodAnalysisRequest.NutrientData n, User user) {
-        double dailyProteinLimit = user.getWeight() * 1.2;
-        
-        // 하루 목표량 대비 한 끼 섭취 비율 (%) 계산
-        double sodiumPct = (n.getSodium() / 2000.0) * 100;
-        double kaliumPct = (n.getKalium() / 2000.0) * 100;
-        double phosPct = (n.getPhos() / 800.0) * 100;
-        double proteinPct = (n.getProtein() / dailyProteinLimit) * 100;
+    public AnalysisResult evaluate(FoodAnalysisRequest.NutrientData n, User user) {
+        AnalysisResult res = new AnalysisResult(getDiseaseName());
+        double protLimit = user.getWeight() * 1.2;
 
-        if (sodiumPct > 40 || kaliumPct > 40 || phosPct > 40 || proteinPct < 15 || proteinPct > 50) return "위험";
-        if (sodiumPct > 25 || kaliumPct > 25 || phosPct > 25 || proteinPct < 25 || proteinPct > 40) return "주의";
+        int sodS = (n.getSodium() / 20.0 > 40) ? 0 : (n.getSodium() / 20.0 > 25 ? 50 : 100);
+        int kalS = (n.getKalium() / 20.0 > 40) ? 0 : (n.getKalium() / 20.0 > 25 ? 50 : 100);
+        int phoS = (n.getPhos() / 8.0 > 40) ? 0 : (n.getPhos() / 8.0 > 25 ? 50 : 100);
+        double pPct = n.getProtein() / protLimit * 100;
+        int protS = (pPct < 15 || pPct > 50) ? 0 : (pPct < 25 || pPct > 40 ? 50 : 100);
 
-        return "안전";
+        res.addNutrient("나트륨", sodS);
+        res.addNutrient("칼륨", kalS);
+        res.addNutrient("인", phoS);
+        res.addNutrient("단백질", protS);
+        res.calculateFinal(sodS * 0.3 + kalS * 0.25 + phoS * 0.25 + protS * 0.2);
+        return res;
     }
 }
