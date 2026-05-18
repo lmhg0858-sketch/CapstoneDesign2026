@@ -83,3 +83,7 @@ Content-Type: application/json
     }
   ]
 }
+
+### 식사 로그 조회
+GET http://localhost:8080/api/meals/logs?userId=test1&date=2026-05-19
+
