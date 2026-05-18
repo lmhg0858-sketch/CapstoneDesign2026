@@ -2,22 +2,26 @@ package capstone.capstone2026.service.analysis;
 
 import capstone.capstone2026.domain.User;
 import capstone.capstone2026.dto.FoodAnalysisRequest;
+import capstone.capstone2026.dto.AnalysisResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HyperlipidemiaComparator implements DiseaseComparator {
-    @Override
-    public String getDiseaseName() { return "고지혈증"; }
+    @Override public String getDiseaseName() { return "고지혈증"; }
 
     @Override
-    public String evaluate(FoodAnalysisRequest.NutrientData n, User user) {
-        boolean isMale = "MALE".equalsIgnoreCase(user.getGender()) || "남성".equals(user.getGender());
-        double fatDanger = isMale ? 50.0 : 40.0;
-        double fatCaution = isMale ? 25.0 : 20.0;
+    public AnalysisResult evaluate(FoodAnalysisRequest.NutrientData n, User user) {
+        AnalysisResult res = new AnalysisResult(getDiseaseName());
+        boolean isM = "MALE".equalsIgnoreCase(user.getGender()) || "남성".equals(user.getGender());
+        
+        int cholS = (n.getCholesterol() >= 120) ? 0 : (n.getCholesterol() >= 60 ? 50 : 100);
+        int fatS = (n.getFat() >= (isM ? 50 : 40)) ? 0 : (n.getFat() >= (isM ? 25 : 20) ? 50 : 100);
+        int sodS = (n.getSodium() >= 1200) ? 0 : (n.getSodium() >= 600 ? 50 : 100);
 
-        if (n.getFat() >= fatDanger || n.getCholesterol() >= 120 || n.getSodium() >= 1200) return "위험";
-        if (n.getFat() >= fatCaution || n.getCholesterol() >= 60 || n.getSodium() >= 600) return "주의";
-
-        return "안전";
+        res.addNutrient("콜레스테롤", cholS);
+        res.addNutrient("지방", fatS);
+        res.addNutrient("나트륨", sodS);
+        res.calculateFinal(cholS * 0.6 + fatS * 0.3 + sodS * 0.1);
+        return res;
     }
 }
