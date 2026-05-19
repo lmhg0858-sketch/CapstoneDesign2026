@@ -390,24 +390,6 @@
   margin-bottom: 18px;
 }
 
-.nutrient-panel__score {
-  display: grid;
-  gap: 4px;
-  justify-items: end;
-}
-
-.nutrient-panel__score strong {
-  font-size: 34px;
-  line-height: 1;
-  letter-spacing: -0.05em;
-  color: #176d63;
-}
-
-.nutrient-panel__score span {
-  font-size: 13px;
-  color: #63738f;
-}
-
 .comparison-legend {
   display: flex;
   gap: 12px;

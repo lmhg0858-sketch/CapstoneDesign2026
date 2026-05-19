@@ -154,15 +154,6 @@ function Home() {
 
   const chartTicks = useMemo(() => buildChartTicks(maxNutrientValue), [maxNutrientValue])
 
-  const completionRate = useMemo(() => {
-    const totalLimit = nutrientRows.reduce((sum, row) => sum + row.recommendedDailyLimit, 0)
-    const totalIntake = nutrientRows.reduce((sum, row) => sum + row.cumulativeValue, 0)
-
-    if (!totalLimit) return 0
-
-    return Math.round((totalIntake / totalLimit) * 100)
-  }, [nutrientRows])
-
   const deficientNutrients = useMemo(
     () =>
       nutrientRows
@@ -308,10 +299,6 @@ function Home() {
                     <i className="comparison-legend__swatch comparison-legend__swatch--actual" />
                     실제 섭취량
                   </span>
-                </div>
-                <div className="nutrient-panel__score">
-                  <strong>{completionRate}%</strong>
-                  <span>전체 적정량 대비</span>
                 </div>
               </div>
 
