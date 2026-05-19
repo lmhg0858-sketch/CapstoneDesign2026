@@ -45,7 +45,10 @@ async function request(baseUrl, path, options = {}) {
 
   if (!response.ok) {
     const message = data?.message || 'Request failed'
-    throw new Error(message)
+    const error = new Error(message)
+    error.status = response.status
+    error.url = joinApiUrl(baseUrl, path)
+    throw error
   }
 
   return data
@@ -66,9 +69,19 @@ export function signup(payload) {
 }
 
 export function analyzeFoodImage(payload) {
-  return request(AI_BASE_URL, API_PATHS.analyzeMeal, {
+  const options = {
     method: 'POST',
     body: JSON.stringify(payload),
+  }
+
+  return request(AI_BASE_URL, API_PATHS.analyzeMeal, options).catch((error) => {
+    const fallbackPath = '/api/meals/analyze'
+
+    if (error.status === 404 && API_PATHS.analyzeMeal !== fallbackPath) {
+      return request(AI_BASE_URL, fallbackPath, options)
+    }
+
+    throw error
   })
 }
 
