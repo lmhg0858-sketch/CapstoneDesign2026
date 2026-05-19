@@ -1,4 +1,4 @@
-﻿const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL || 'http://localhost:8080'
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_API_BASE_URL || 'http://localhost:8080'
 const AI_BASE_URL = import.meta.env.VITE_AI_API_BASE_URL || 'http://localhost:8000'
 
 const API_PATHS = {
@@ -8,6 +8,8 @@ const API_PATHS = {
   me: '/api/users/me',
   recentMeals: '/api/meals/recent',
   meals: '/api/meals',
+  cumulativeRiskNutrients:
+    import.meta.env.VITE_CUMULATIVE_RISK_NUTRIENTS_PATH || '/api/meals/dashboard',
 }
 
 function joinApiUrl(baseUrl, path) {
@@ -90,4 +92,13 @@ export function createMeal(payload) {
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+export function getCumulativeRiskNutrients({ userId, date }) {
+  const params = new URLSearchParams({
+    userId: `${userId}`,
+    date,
+  })
+
+  return request(BACKEND_BASE_URL, `${API_PATHS.cumulativeRiskNutrients}?${params.toString()}`)
 }
