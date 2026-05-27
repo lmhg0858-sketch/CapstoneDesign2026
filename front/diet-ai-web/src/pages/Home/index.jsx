@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   clearAuthSession,
@@ -7,8 +7,9 @@ import {
   notifyAuthStateChanged,
   subscribeAuthStateChange,
 } from '../../lib/auth'
-import { getCumulativeRiskNutrients } from '../../lib/api'
+import { getCumulativeRiskNutrients, getDayRecommendation, getRankings } from '../../lib/api'
 import heroImage from '../../assets/login_signup.jpg'
+import rankingMedalImage from '../../assets/ranking-medal.png'
 import './Home.css'
 
 const DISEASE_LABELS = {
@@ -18,17 +19,10 @@ const DISEASE_LABELS = {
   KIDNEY_DISEASE: '신장질환',
 }
 
-const RANKING_INFO = {
-  tier: 'Silver',
-  score: 87,
-  rank: 32,
-  percentile: '상위 8%',
-}
-
-const GENERIC_RECOMMENDATIONS = [
-  '부족한 영양소가 많은 식사는 다음 끼니에서 보완하도록 구성해 보세요.',
-  '적정량을 초과한 영양소는 국물류, 가공식품, 디저트 섭취를 줄이면서 조절해 보세요.',
-  '오늘 기록을 계속 쌓아두면 질환 맞춤 추천 정확도가 더 좋아집니다.',
+const TRAFFIC_LIGHT_STATES = [
+  { key: 'danger', label: '빨강' },
+  { key: 'warning', label: '노랑' },
+  { key: 'safe', label: '초록' },
 ]
 
 function formatAmount(value, unit) {
@@ -78,13 +72,68 @@ function buildChartTicks(maxValue, steps = 4) {
   const safeMax = Math.max(maxValue, 1)
   const roundedMax = Math.ceil(safeMax / steps) * steps
 
-  return Array.from({ length: steps + 1 }, (_, index) => {
-    const value = Math.round((roundedMax / steps) * index)
-    return {
-      value,
-      percent: (index / steps) * 100,
-    }
-  })
+  return Array.from({ length: steps + 1 }, (_, index) => ({
+    value: Math.round((roundedMax / steps) * index),
+    percent: (index / steps) * 100,
+  }))
+}
+
+function normalizeRiskLevel(value) {
+  if (!value) return 'warning'
+
+  const normalized = `${value}`.trim().toLowerCase()
+
+  if (normalized === '위험' || normalized === 'danger' || normalized === 'red') return 'danger'
+  if (normalized === '주의' || normalized === 'warning' || normalized === 'yellow') return 'warning'
+  if (normalized === '안전' || normalized === 'safe' || normalized === 'green') return 'safe'
+
+  return 'warning'
+}
+
+function normalizeRecommendation(data) {
+  const evaluation = data?.day_evaluation || {}
+  const recommendations = Array.isArray(data?.day_recom) ? data.day_recom : []
+
+  return {
+    riskLevel: normalizeRiskLevel(evaluation.risk_level),
+    riskLabel: evaluation.risk_level || '주의',
+    evaluationContent: evaluation.evaluation_content || '아직 평가 코멘트가 없습니다.',
+    foods: recommendations.map((item, index) => ({
+      id: item?.id || `${item?.food_name || 'food'}-${index}`,
+      foodName: item?.food_name || '이름 없는 음식',
+      content: item?.content || '',
+    })),
+  }
+}
+
+function normalizeRankingEntries(items) {
+  if (!Array.isArray(items)) return []
+
+  return items
+    .map((item) => {
+      const rank = Number(item?.rank)
+      const averageScore = Number(item?.averageScore)
+      const mealCount = Number(item?.mealCount)
+
+      return {
+        rank: Number.isFinite(rank) ? rank : null,
+        userId: item?.userId ? `${item.userId}` : '',
+        nickname: item?.nickname ? `${item.nickname}` : '이름 없음',
+        averageScore: Number.isFinite(averageScore) ? averageScore : 0,
+        mealCount: Number.isFinite(mealCount) ? mealCount : 0,
+      }
+    })
+    .filter((item) => item.rank !== null)
+    .sort((a, b) => a.rank - b.rank)
+}
+
+function formatRankingScore(value) {
+  const numericValue = Number(value)
+
+  if (!Number.isFinite(numericValue)) return '-'
+  if (Number.isInteger(numericValue)) return `${numericValue}`
+
+  return numericValue.toFixed(1)
 }
 
 function Home() {
@@ -93,16 +142,26 @@ function Home() {
   const [dashboardData, setDashboardData] = useState(null)
   const [isDashboardLoading, setIsDashboardLoading] = useState(false)
   const [dashboardError, setDashboardError] = useState('')
+  const [recommendationData, setRecommendationData] = useState(null)
+  const [isRecommendationLoading, setIsRecommendationLoading] = useState(false)
+  const [recommendationError, setRecommendationError] = useState('')
+  const [rankingEntries, setRankingEntries] = useState([])
+  const [isRankingLoading, setIsRankingLoading] = useState(false)
+  const [rankingError, setRankingError] = useState('')
 
   useEffect(() => subscribeAuthStateChange(setLoggedIn), [])
 
   useEffect(() => {
     const userId = getAuthUserId()
+    const date = formatTodayDate()
 
     if (!loggedIn || !userId) {
       setDashboardData(null)
       setDashboardError('')
       setIsDashboardLoading(false)
+      setRecommendationData(null)
+      setRecommendationError('')
+      setIsRecommendationLoading(false)
       return
     }
 
@@ -113,10 +172,7 @@ function Home() {
       setDashboardError('')
 
       try {
-        const response = await getCumulativeRiskNutrients({
-          userId,
-          date: formatTodayDate(),
-        })
+        const response = await getCumulativeRiskNutrients({ userId, date })
 
         if (!isMounted) return
         setDashboardData(response)
@@ -131,12 +187,63 @@ function Home() {
       }
     }
 
+    const loadRecommendation = async () => {
+      setIsRecommendationLoading(true)
+      setRecommendationError('')
+
+      try {
+        const response = await getDayRecommendation({ userId, date })
+
+        if (!isMounted) return
+        setRecommendationData(response)
+      } catch (requestError) {
+        if (!isMounted) return
+        setRecommendationData(null)
+        setRecommendationError(requestError.message || '식단 추천을 불러오지 못했습니다.')
+      } finally {
+        if (isMounted) {
+          setIsRecommendationLoading(false)
+        }
+      }
+    }
+
     loadDashboard()
+    loadRecommendation()
 
     return () => {
       isMounted = false
     }
   }, [loggedIn])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadRankings = async () => {
+      setIsRankingLoading(true)
+      setRankingError('')
+
+      try {
+        const response = await getRankings()
+
+        if (!isMounted) return
+        setRankingEntries(normalizeRankingEntries(response?.ranking))
+      } catch (requestError) {
+        if (!isMounted) return
+        setRankingEntries([])
+        setRankingError(requestError.message || '랭킹 정보를 불러오지 못했습니다.')
+      } finally {
+        if (isMounted) {
+          setIsRankingLoading(false)
+        }
+      }
+    }
+
+    loadRankings()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const nutrientRows = useMemo(
     () => normalizeNutrients(dashboardData?.cumulative_risk_nutrients),
@@ -153,29 +260,20 @@ function Home() {
   }, [nutrientRows])
 
   const chartTicks = useMemo(() => buildChartTicks(maxNutrientValue), [maxNutrientValue])
-
-  const deficientNutrients = useMemo(
-    () =>
-      nutrientRows
-        .filter((row) => row.cumulativeValue < row.recommendedDailyLimit)
-        .sort((a, b) => {
-          const gapA = a.recommendedDailyLimit - a.cumulativeValue
-          const gapB = b.recommendedDailyLimit - b.cumulativeValue
-          return gapB - gapA
-        })
-        .slice(0, 4),
-    [nutrientRows]
-  )
-
-  const exceededNutrients = useMemo(
-    () => nutrientRows.filter((row) => row.cumulativeValue > row.recommendedDailyLimit).slice(0, 4),
-    [nutrientRows]
-  )
+  const recommendation = useMemo(() => normalizeRecommendation(recommendationData), [recommendationData])
 
   const heroHighlights = nutrientRows.slice(0, 3)
-  const userDiseaseLabels = (dashboardData?.user_diseases || []).map(getDiseaseLabel)
+  const userDiseases = dashboardData?.user_diseases || dashboardData?.userDiseases || []
+  const userDiseaseLabels = userDiseases.map(getDiseaseLabel)
   const dashboardDateLabel = formatDisplayDate(dashboardData?.date)
   const hasDashboardData = nutrientRows.length > 0
+  const hasRecommendations = recommendation.foods.length > 0
+  const authUserId = getAuthUserId()
+  const currentRanking = useMemo(
+    () => rankingEntries.find((entry) => entry.userId === authUserId) || null,
+    [authUserId, rankingEntries]
+  )
+  const topRankingEntry = rankingEntries[0] || null
 
   const handleLogout = () => {
     clearAuthSession()
@@ -277,7 +375,7 @@ function Home() {
           {!loggedIn ? (
             <div className="dashboard-empty">
               <h3>개인화 대시보드를 보려면 로그인해 주세요.</h3>
-              <p>로그인한 사용자 `userId`와 오늘 날짜로 영양소 비교 대시보드를 불러옵니다.</p>
+              <p>로그인한 사용자의 섭취 영양소 비교 대시보드를 불러옵니다.</p>
               <Link className="dashboard-link" to="/login">
                 로그인하러 가기
               </Link>
@@ -401,78 +499,162 @@ function Home() {
         </article>
 
         <article className="dashboard-card recommend-card dashboard-card--wide">
-          <span className="dashboard-card__eyebrow">Recommendation</span>
-          <h2>식단추천</h2>
-          <p className="recommend-subtitle">오늘 부족하거나 초과한 영양소를 기준으로 다음 식사를 조정해 보세요.</p>
-          <div className="recommend-chips">
-            {deficientNutrients.length ? (
-              deficientNutrients.map((row) => <span key={`${row.nutrientKey}-chip`}>{row.nutrientName}</span>)
-            ) : (
-              <span>현재는 부족 영양소가 없습니다</span>
-            )}
+          <div className="recommend-card__head">
+            <span className="dashboard-card__eyebrow">Recommendation</span>
+            <h2>식단추천</h2>
+            <p className="recommend-subtitle">AI가 하루 식단 상태를 평가하고 추천 음식을 정리해 보여줍니다.</p>
           </div>
-          <div className="recommend-sections">
-            <section className="recommend-section">
-              <h3>보완이 필요한 영양소</h3>
-              {deficientNutrients.length ? (
-                <ul className="recommend-list">
-                  {deficientNutrients.map((row) => (
-                    <li key={`${row.nutrientKey}-deficit`}>
-                      {row.nutrientName}: {formatAmount(row.cumulativeValue, row.unit)} /{' '}
-                      {formatAmount(row.recommendedDailyLimit, row.unit)}
-                    </li>
+
+          {recommendationError ? <p className="form-feedback error">{recommendationError}</p> : null}
+
+          {!loggedIn ? (
+            <div className="dashboard-empty">
+              <h3>식단 추천을 보려면 로그인해 주세요.</h3>
+              <p>로그인한 사용자 기준으로 AI 일일 평가와 추천 음식 목록을 가져옵니다.</p>
+            </div>
+          ) : isRecommendationLoading ? (
+            <div className="dashboard-empty">
+              <h3>식단 추천을 불러오는 중입니다.</h3>
+              <p>오늘 식단 상태를 평가하고 추천 음식 목록을 정리하고 있어요.</p>
+            </div>
+          ) : recommendationData ? (
+            <div className="recommend-layout">
+              <section className="recommend-foods">
+                <h3>추천 음식</h3>
+                {hasRecommendations ? (
+                  <ul className="recommend-food-list">
+                    {recommendation.foods.map((item) => (
+                      <li className="recommend-food-item" key={item.id}>
+                        <div className="recommend-food-item__bullet" aria-hidden="true" />
+                        <div className="recommend-food-item__content">
+                          <strong>{item.foodName}</strong>
+                          <p>{item.content || '추천 내용이 없습니다.'}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="recommend-empty">추천 음식 데이터가 없습니다.</p>
+                )}
+              </section>
+
+              <section className="recommend-evaluation">
+                <div className="traffic-signal" aria-label={`위험도 ${recommendation.riskLabel}`}>
+                  {TRAFFIC_LIGHT_STATES.map((state) => (
+                    <div
+                      className={
+                        recommendation.riskLevel === state.key
+                          ? `traffic-light traffic-light--${state.key} traffic-light--active`
+                          : `traffic-light traffic-light--${state.key}`
+                      }
+                      key={state.key}
+                    />
                   ))}
-                </ul>
-              ) : (
-                <p className="recommend-empty">현재 부족한 영양소는 없습니다.</p>
-              )}
-            </section>
-            <section className="recommend-section">
-              <h3>다음 식사 팁</h3>
-              <ul className="recommend-list">
-                {GENERIC_RECOMMENDATIONS.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </section>
-          </div>
-          <Link className="dashboard-link" to="/diet">
-            오늘 식단 기록하러 가기
-          </Link>
+                </div>
+
+                <div className="evaluation-comment">
+                  <span className="evaluation-comment__label">평가 코멘트</span>
+                  <p>{recommendation.evaluationContent}</p>
+                </div>
+              </section>
+            </div>
+          ) : (
+            <div className="dashboard-empty">
+              <h3>식단 추천 데이터가 없습니다.</h3>
+              <p>AI 응답에서 `day_evaluation`과 `day_recom`이 오면 이 카드에 표시됩니다.</p>
+            </div>
+          )}
         </article>
 
         <article className="dashboard-card ranking-card dashboard-card--wide">
-          <span className="dashboard-card__eyebrow">Momentum</span>
-          <h2>랭킹</h2>
-          <p className="dashboard-card__lead">지속적인 기록과 균형 잡힌 식단이 순위로 이어집니다.</p>
-          <div className="ranking-grid">
-            <div className="ranking-badge" aria-hidden="true">
-              🏅
+          <div className="ranking-sketch">
+            <div className="ranking-sketch__title-wrap">
+              <div className="ranking-sketch__head">
+                <span className="dashboard-card__eyebrow">Momentum</span>
+                <Link className="ranking-sketch__button" to="/ranking">
+                  전체 랭킹 보기
+                </Link>
+              </div>
+
+              <div className="ranking-sketch__header">
+                <h2>랭킹</h2>
+              </div>
+              <p className="dashboard-card__lead">
+                꾸준한 식단관리를 돕도록 랭킹 시스템을 제공합니다.
+              </p>
             </div>
-            <dl>
-              <div>
-                <dt>등급</dt>
-                <dd>{RANKING_INFO.tier}</dd>
+
+            {rankingError ? <p className="form-feedback error">{rankingError}</p> : null}
+
+            <div className="ranking-sketch__body">
+              <div className="ranking-sketch__left">
+                <div className="ranking-medal">
+                  <img alt="랭킹 메달" className="ranking-medal__image" src={rankingMedalImage} />
+                </div>
+                {topRankingEntry ? (
+                  <div className="ranking-sketch__top-user">
+                    <span>현재 1위</span>
+                    <strong>{topRankingEntry.nickname}</strong>
+                  </div>
+                ) : null}
               </div>
-              <div>
-                <dt>점수</dt>
-                <dd>{RANKING_INFO.score}점</dd>
+
+              <div className="ranking-stat ranking-stat--rank">
+                <span className="ranking-stat__label">현재순위</span>
+                {!loggedIn ? (
+                  <>
+                    <p className="ranking-stat__value ranking-stat__value--empty">-</p>
+                    <span className="ranking-stat__meta">로그인 후 내 순위를 확인할 수 있습니다.</span>
+                  </>
+                ) : isRankingLoading ? (
+                  <>
+                    <p className="ranking-stat__value ranking-stat__value--empty">...</p>
+                    <span className="ranking-stat__meta">랭킹 불러오는 중</span>
+                  </>
+                ) : currentRanking ? (
+                  <>
+                    <p className="ranking-stat__value">
+                      {currentRanking.rank}
+                      <small>위</small>
+                    </p>
+                    <span className="ranking-stat__meta">{currentRanking.nickname}</span>
+                  </>
+                ) : (
+                  <>
+                    <p className="ranking-stat__value ranking-stat__value--empty">-</p>
+                    <span className="ranking-stat__meta">현재 사용자 랭킹 정보가 없습니다.</span>
+                  </>
+                )}
               </div>
-              <div>
-                <dt>현재순위</dt>
-                <dd>
-                  {RANKING_INFO.rank}위 ({RANKING_INFO.percentile})
-                </dd>
+
+              <div className="ranking-stat ranking-stat--score">
+                <span className="ranking-stat__label">점수</span>
+                {!loggedIn ? (
+                  <>
+                    <p className="ranking-stat__value ranking-stat__value--empty">-</p>
+                    <span className="ranking-stat__meta">로그인 후 내 평균 점수를 확인할 수 있습니다.</span>
+                  </>
+                ) : isRankingLoading ? (
+                  <>
+                    <p className="ranking-stat__value ranking-stat__value--empty">...</p>
+                    <span className="ranking-stat__meta">랭킹 불러오는 중</span>
+                  </>
+                ) : currentRanking ? (
+                  <>
+                    <p className="ranking-stat__value">
+                      {formatRankingScore(currentRanking.averageScore)}
+                    </p>
+                    <span className="ranking-stat__meta">식사 {currentRanking.mealCount}회 기준 평균 점수</span>
+                  </>
+                ) : (
+                  <>
+                    <p className="ranking-stat__value ranking-stat__value--empty">-</p>
+                    <span className="ranking-stat__meta">현재 사용자 점수 정보가 없습니다.</span>
+                  </>
+                )}
               </div>
-              <div>
-                <dt>초과 영양소 수</dt>
-                <dd>{exceededNutrients.length}개</dd>
-              </div>
-            </dl>
+            </div>
           </div>
-          <Link className="dashboard-link" to="/ranking">
-            전체 랭킹 보기
-          </Link>
         </article>
       </section>
     </section>
