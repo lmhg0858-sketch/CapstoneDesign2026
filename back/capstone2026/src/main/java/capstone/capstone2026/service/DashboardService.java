@@ -55,6 +55,7 @@ public class DashboardService {
 
         return DashboardResponse.builder()
                 .date(date.toString())
+                .userDiseases(diseases)
                 .cumulativeRiskNutrients(resultList)
                 .build();
     }

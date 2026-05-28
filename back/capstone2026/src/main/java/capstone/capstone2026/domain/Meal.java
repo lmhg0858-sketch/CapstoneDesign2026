@@ -20,6 +20,8 @@ public class Meal {
 
     private String foodName; // 음식 이름
 
+    private String riskLevel;
+
     private LocalDateTime eatTime; // 섭취 시간
 
     // 영양소 데이터
