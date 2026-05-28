@@ -137,3 +137,25 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# ===========
+# PYTHON
+# ===========
+ai/storage/openai_key.txt
+ai/storage/dangdang-*.json
+
+**/__pycache__/
+**/*.pyc
+ai/venv/
+ai/.venv/
+ai/.env
+
+ai/storage/base64_result*.txt
+ai/storage/*.jpg
+ai/storage/*.png
+ai/*.jpg
+ai/*.png
+
+~$*
+**/.DS_Store
+Thumbs.db

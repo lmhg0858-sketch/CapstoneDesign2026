@@ -45,7 +45,7 @@ class NutritionService:
         print(f"🔍 [AI 매칭 중] 입력: '{name_from_vision}' -> 매칭 후보: '{best_match}' (점수: {score})")
         
         # 2. 유사도 문턱을 50점으로 낮춤 (더 유연하게 매칭)
-        if score >= 50:
+        if score >= 80:
             match = self.df[self.df['음 식 명'] == best_match]
             if not match.empty:
                 row = match.iloc[0]
