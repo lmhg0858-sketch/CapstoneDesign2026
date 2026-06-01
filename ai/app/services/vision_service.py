@@ -31,7 +31,6 @@ class VisionService:
 
     def get_crop_coordinates(self, vertices, img_width, img_height):
         """정규화된 좌표를 Pillow 크롭용 실제 픽셀 좌표로 변환"""
-        # 비어있는 좌표나 누락된 바운딩 박스 예외 처리 대비
         x_coords = [int(v.x * img_width) for v in vertices if v.x is not None]
         y_coords = [int(v.y * img_height) for v in vertices if v.y is not None]
         
@@ -40,20 +39,27 @@ class VisionService:
             
         return min(x_coords), min(y_coords), max(x_coords), max(y_coords)
 
-    def analyze_single_crop(self, cropped_base64: str, food_list: list = None) -> str:
-        """(3) 크롭한 이미지 조각마다 개별 음식 분석 요청 (GPT-4o 활용)"""
+    def analyze_single_crop(self, cropped_base64: str, food_list: list = None) -> tuple:
+        """
+        🎯 [고도화 패치]: 크롭한 이미지 조각을 기반으로 음식명과 중량(g)을 쌍으로 추정합니다.
+        """
         try:
             allowed_foods = ", ".join(food_list[:400]) if food_list else "한국 음식"
             
+            # 크롭 이미지 전용 3차원 볼륨 및 100원 동전 대비 정밀 중량 추정 인스트럭션 심기
             prompt = f"""
-너는 최고의 식단 분석 전문가야. 
+너는 최고의 식단 분석 및 음식 중량(g) 추정 전문가야. 
 제공된 이미지는 전체 사진에서 하나의 음식 영역만 크롭한 조각 사진이야.
-이 사진 속 음식을 확인하고, 아래의 [음식 리스트]에서 가장 정확한 매칭 명칭 하나만 답변해줘.
+
+[중요: 중량(g) 추정 지시]
+전체 사진 속에는 크기 참조용 '100원 동전(지름 22.8mm)'이 함께 촬영되어 있어.
+이 크롭된 음식의 면적과 3차원 부피감을 동전 및 주변 용기 크기와 상대적으로 비교하여, 실제 무게(g)를 최대한 과학적으로 추정해줘.
+(예: 일반적인 공기밥 한 그릇 분량 크기면 200~210, 소량의 밑반찬 종지 크기면 30~50, 국그릇 크기면 300~400 등)
 
 [지시 사항]
-1. 반드시 아래의 [음식 리스트] 내 명칭만 사용해.
-2. 어떠한 사족(설명, 인사말 등)도 절대 붙이지 말고 딱 '음식 이름' 한 단어만 반환해.
-   예시: 떡국
+1. 반드시 아래의 [음식 리스트] 내 명칭 중 가장 정확한 매칭 명칭 하나만 골라야 해.
+2. 어떠한 사족이나 설명, 마크다운, g 단위 문자도 절대 붙이지 말고, 반드시 '음식명:중량' 형태로 딱 한 쌍만 반환해.
+   (출력 예시: 제육볶음:250)
 
 [음식 리스트]
 {allowed_foods}
@@ -68,15 +74,30 @@ class VisionService:
                     ]
                 }],
                 temperature=0,
-                max_tokens=20 # 음식 한 단어면 충분하므로 토큰 절약
+                max_tokens=40 # 포맷이 짧으므로 소량 설정
             )
-            return response.choices[0].message.content.strip()
+            
+            gpt_text = response.choices[0].message.content.strip()
+            
+            # 결과 파싱 진행 ('음식명:중량' 형태 해체)
+            if ":" in gpt_text:
+                name_part, weight_part = gpt_text.split(":", 1)
+                food_name = name_part.strip()
+                try:
+                    estimated_weight = float(weight_part.strip())
+                except ValueError:
+                    estimated_weight = 200.0 # 파싱 예외 발생 시 디폴트 보정값
+            else:
+                food_name = gpt_text
+                estimated_weight = 200.0
+                
+            return food_name, estimated_weight
+            
         except Exception as e:
-            print(f"❌ 크롭 이미지 개별 분석 실패: {e}")
-            return "알 수 없는 음식"
+            print(f"❌ 크롭 이미지 개별 분석 및 양 추정 실패: {e}")
+            return "알 수 없는 음식", 200.0
 
     async def analyze_food_image(self, base64_str: str, food_list: list = None):
-        # 이미지 디코딩 및 Pillow 객체 획득
         image_bytes, pil_image = self.decode_image(base64_str)
         if not image_bytes or not pil_image: 
             return {"error": "이미지 디코딩 실패"}
@@ -87,7 +108,7 @@ class VisionService:
         image = vision.Image(content=image_bytes)
         objects = self.client.object_localization(image=image).localized_object_annotations
 
-        # 식기류 및 노이즈 객체 필터링
+        # 식기류 필터링
         food_boxes = [obj for obj in objects if obj.name not in ["Tableware", "Bowl", "Plate", "Container", "Table ware"]]
 
         detected_foods = []
@@ -107,15 +128,16 @@ class VisionService:
             cropped_pil.save(buffered, format="JPEG")
             cropped_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
             
-            # 4. 개별 크롭 이미지 분석 요청
-            food_name = self.analyze_single_crop(cropped_base64, food_list)
+            # 4. 개별 크롭 이미지 분석 및 중량 추정 동시 요청
+            food_name, estimated_weight = self.analyze_single_crop(cropped_base64, food_list)
             
-            # 5. 최종 데이터 포맷 적재
+            # 5. 최종 데이터 포맷 적재 (estimated_weight 추가)
             detected_foods.append({
-                "food_name_en": food_name,  # NIA 영양 데이터베이스 매핑용 키워드
+                "food_name_en": food_name,  # DB 매핑용 한글명
                 "confidence": obj.score,
+                "estimated_weight": estimated_weight,  # 추정 중량(float) 주입
                 "coordinates": [{"x": v.x, "y": v.y} for v in vertices]
             })
 
-        print(f"✅ AI 크롭 기반 최종 분석 완료: {[f['food_name_en'] for f in detected_foods]}")
+        print(f"✅ AI 크롭 및 양 추정 최종 완성: {[(f['food_name_en'], f['estimated_weight']) for f in detected_foods]}")
         return detected_foods

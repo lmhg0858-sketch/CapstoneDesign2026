@@ -31,7 +31,7 @@ def run_pipeline_test():
         print("-" * 40)
         
         # 가상의 유저 식단 로그 및 기저질환 세팅
-        test_disease = "고혈압"
+        test_disease = "당뇨병"
         test_query = "공복 상태인데 배고파서 흰쌀밥 두 공기 먹었어. 괜찮을까?"
         
         print(f"👤 유저 기저질환: {test_disease}")
