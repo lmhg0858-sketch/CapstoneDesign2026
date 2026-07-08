@@ -1,4 +1,4 @@
-﻿const TOKEN_KEY = 'auth_token'
+const TOKEN_KEY = 'auth_token'
 const USER_ID_KEY = 'auth_user_id'
 const AUTH_STATE_EVENT = 'auth-state-changed'
 
@@ -6,13 +6,17 @@ export function isLoggedIn() {
   return Boolean(localStorage.getItem(TOKEN_KEY))
 }
 
+export function getAuthUserId() {
+  return localStorage.getItem(USER_ID_KEY)
+}
+
 export function saveAuthSession({ token, userId }) {
   if (token) {
     localStorage.setItem(TOKEN_KEY, token)
   }
 
-  if (userId) {
-    localStorage.setItem(USER_ID_KEY, userId)
+  if (userId !== undefined && userId !== null && `${userId}`.trim()) {
+    localStorage.setItem(USER_ID_KEY, `${userId}`)
   }
 }
 

@@ -121,7 +121,9 @@ function Diet() {
 
   const detectedItems = result?.data?.detected_items || []
   const aiAdvice = result?.data?.ai_evaluation?.content || result?.data?.ai_evaluation?.contents || ''
-  const score = useMemo(() => calcScore(detectedItems), [detectedItems])
+  const apiScore = result?.data?.score
+  const fallbackScore = useMemo(() => calcScore(detectedItems), [detectedItems])
+  const score = typeof apiScore === 'number' ? apiScore : fallbackScore
 
   const nutritionRows = useMemo(() => {
     if (!detectedItems.length) return []
@@ -176,7 +178,10 @@ function Diet() {
 
       setResult(response)
     } catch (requestError) {
-      setError(requestError.message || 'AI 분석 요청에 실패했습니다.')
+      const detail = requestError.status
+        ? ` (${requestError.status}${requestError.url ? `, ${requestError.url}` : ''})`
+        : ''
+      setError(`${requestError.message || 'AI 분석 요청에 실패했습니다.'}${detail}`)
     } finally {
       setIsLoading(false)
     }
@@ -253,7 +258,11 @@ function Diet() {
               <div className="diet-score">
                 <h2>점수</h2>
                 <p className="diet-score__value">{score}점</p>
-                <small>점수 API 연동 전 임시 계산값</small>
+                <small>
+                  {typeof apiScore === 'number'
+                    ? 'AI 분석 점수'
+                    : '점수 API 미응답으로 임시 계산값 표시'}
+                </small>
               </div>
 
               <div className="diet-advice">
