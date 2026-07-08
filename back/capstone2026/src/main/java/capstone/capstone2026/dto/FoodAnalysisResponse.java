@@ -9,10 +9,13 @@ import java.util.List;
 @AllArgsConstructor
 public class FoodAnalysisResponse {
 
-    @JsonProperty("user_diseases") // JSON의 키값과 일치시킴
+    @JsonProperty("user_diseases")
     private List<String> userDiseases;
 
-    @JsonProperty("analysis_results") // JSON의 키값과 일치시킴
+    @JsonProperty("score")
+    private int score;
+
+    @JsonProperty("analysis_results")
     private List<AnalysisResult> analysisResults;
 
     @Getter
