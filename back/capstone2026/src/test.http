@@ -1,0 +1,517 @@
+### 회원가입
+POST http://localhost:8080/api/auth/signup
+Content-Type: application/json
+
+{
+  "id": "test1",
+  "email": "test1@test.com",
+  "password": "1234",
+  "nickname": "테스트유저",
+  "age": 24,
+  "gender": "남자",
+  "height": 170.0,
+  "weight": 70.0,
+  "desease": ["DIABETES", "HYPERTENSION"]
+}
+
+### 로그인
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "id": "test1",
+  "password": "1234"
+}
+
+### 음식 분석
+POST http://localhost:8080/api/meals/analyze?userId=test1
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "김치찌개",
+      "nutrient_name": {
+        "kcal": 350,
+        "carbs": 20,
+        "protein": 18,
+        "fat": 22,
+        "sugar": 5,
+        "sodium": 1200,
+        "cholesterol": 40,
+        "kalium": 500,
+        "phos": 200
+      }
+    }
+  ]
+}
+
+
+### 여러 음식 분석 테스트
+POST http://localhost:8080/api/meals/analyze?userId=cheol
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "김치찌개",
+      "nutrient_name": {
+        "kcal": 350,
+        "carbs": 20,
+        "protein": 18,
+        "fat": 22,
+        "sugar": 5,
+        "sodium": 1200,
+        "cholesterol": 40,
+        "kalium": 500,
+        "phos": 200
+      }
+    },
+    {
+      "food_name": "삶은 계란",
+      "nutrient_name": {
+        "kcal": 80,
+        "carbs": 1,
+        "protein": 7,
+        "fat": 5,
+        "sugar": 0,
+        "sodium": 60,
+        "cholesterol": 180,
+        "kalium": 70,
+        "phos": 90
+      }
+    }
+  ]
+}
+
+### 식사 로그 조회
+GET http://localhost:8080/api/meals/logs?userId=test1&date=2026-05-27
+
+### 유저 전체 식사 로그 조회
+GET http://localhost:8080/api/meals/logs?userId=test1
+
+### 전체 랭킹 조회
+GET http://localhost:8080/api/rankings
+
+### 여러 음식 분석 테스트 2
+POST http://localhost:8080/api/meals/analyze?userId=cheol
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "떡볶이",
+      "nutrient_name": {
+        "kcal": 520,
+        "carbs": 95,
+        "protein": 10,
+        "fat": 8,
+        "sugar": 28,
+        "sodium": 900,
+        "cholesterol": 15,
+        "kalium": 350,
+        "phos": 180
+      }
+    },
+    {
+      "food_name": "바나나우유",
+      "nutrient_name": {
+        "kcal": 210,
+        "carbs": 35,
+        "protein": 6,
+        "fat": 5,
+        "sugar": 30,
+        "sodium": 120,
+        "cholesterol": 20,
+        "kalium": 250,
+        "phos": 150
+      }
+    }
+  ]
+}
+
+### daily_risk 위험 테스트
+POST http://localhost:8080/api/meals/analyze?userId=min
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "라면",
+      "nutrient_name": {
+        "kcal": 520,
+        "carbs": 78,
+        "protein": 12,
+        "fat": 18,
+        "sugar": 4,
+        "sodium": 1800,
+        "cholesterol": 15,
+        "kalium": 250,
+        "phos": 180
+      }
+    },
+    {
+      "food_name": "초코케이크",
+      "nutrient_name": {
+        "kcal": 450,
+        "carbs": 65,
+        "protein": 6,
+        "fat": 20,
+        "sugar": 38,
+        "sodium": 280,
+        "cholesterol": 80,
+        "kalium": 150,
+        "phos": 120
+      }
+    },
+    {
+      "food_name": "콜라",
+      "nutrient_name": {
+        "kcal": 150,
+        "carbs": 39,
+        "protein": 0,
+        "fat": 0,
+        "sugar": 39,
+        "sodium": 20,
+        "cholesterol": 0,
+        "kalium": 5,
+        "phos": 15
+      }
+    }
+  ]
+}
+
+### 복합질환 부담 테스트
+POST http://localhost:8080/api/meals/analyze?userId=min
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "떡볶이",
+      "nutrient_name": {
+        "kcal": 600,
+        "carbs": 105,
+        "protein": 12,
+        "fat": 12,
+        "sugar": 24,
+        "sodium": 1600,
+        "cholesterol": 25,
+        "kalium": 300,
+        "phos": 180
+      }
+    },
+    {
+      "food_name": "튀김",
+      "nutrient_name": {
+        "kcal": 420,
+        "carbs": 45,
+        "protein": 8,
+        "fat": 24,
+        "sugar": 3,
+        "sodium": 750,
+        "cholesterol": 60,
+        "kalium": 220,
+        "phos": 160
+      }
+    }
+  ]
+}
+
+### 당뇨 + 고혈압 사용자 테스트
+POST http://localhost:8080/api/meals/analyze?userId=shingoji
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "일반비빔밥",
+      "nutrient_name": {
+        "kcal": 200,
+        "carbs": 27,
+        "protein": 6,
+        "fat": 3,
+        "sugar": 2,
+        "sodium": 300,
+        "cholesterol": 40,
+        "kalium": 900,
+        "phos": 350
+      }
+    },
+    {
+      "food_name": "일반김밥",
+      "nutrient_name": {
+        "kcal": 200,
+        "carbs": 30,
+        "protein": 5,
+        "fat": 5,
+        "sugar": 1,
+        "sodium": 350,
+        "cholesterol": 30,
+        "kalium": 850,
+        "phos": 330
+      }
+    }
+  ]
+}
+
+### 신장질환 + 고지혈증 사용자 테스트
+POST http://localhost:8080/api/meals/analyze?userId=shingoji
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "바나나",
+      "nutrient_name": {
+        "kcal": 180,
+        "carbs": 27,
+        "protein": 2,
+        "fat": 5,
+        "sugar": 8,
+        "sodium": 5,
+        "cholesterol": 0,
+        "kalium": 850,
+        "phos": 80
+      }
+    },
+    {
+      "food_name": "고구마",
+      "nutrient_name": {
+        "kcal": 200,
+        "carbs": 30,
+        "protein": 3,
+        "fat": 5,
+        "sugar": 7,
+        "sodium": 20,
+        "cholesterol": 0,
+        "kalium": 900,
+        "phos": 90
+      }
+    }
+  ]
+}
+
+
+### 당뇨 + 고혈압 안전 테스트
+POST http://localhost:8080/api/meals/analyze?userId=dango
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "닭가슴살 현미밥",
+      "nutrient_name": {
+        "kcal": 400,
+        "carbs": 60,
+        "protein": 25,
+        "fat": 10,
+        "sugar": 3,
+        "sodium": 350,
+        "cholesterol": 60,
+        "kalium": 420,
+        "phos": 220
+      }
+    },
+    {
+      "food_name": "두부 채소 덮밥",
+      "nutrient_name": {
+        "kcal": 360,
+        "carbs": 54,
+        "protein": 18,
+        "fat": 9,
+        "sugar": 5,
+        "sodium": 420,
+        "cholesterol": 20,
+        "kalium": 480,
+        "phos": 210
+      }
+    }
+  ]
+}
+
+### 당뇨 + 고혈압 주의 테스트 - 떡볶이 + 김밥
+POST http://localhost:8080/api/meals/analyze?userId=dango
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "떡볶이",
+      "nutrient_name": {
+        "kcal": 480,
+        "carbs": 78,
+        "protein": 9,
+        "fat": 12,
+        "sugar": 18,
+        "sodium": 750,
+        "cholesterol": 20,
+        "kalium": 250,
+        "phos": 160
+      }
+    },
+    {
+      "food_name": "김밥",
+      "nutrient_name": {
+        "kcal": 460,
+        "carbs": 64,
+        "protein": 17,
+        "fat": 14,
+        "sugar": 4,
+        "sodium": 600,
+        "cholesterol": 80,
+        "kalium": 260,
+        "phos": 180
+      }
+    }
+  ]
+}
+
+### 분석 테스트 1 - 제육덮밥 + 된장국
+POST http://localhost:8080/api/meals/analyze?userId=zoo
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "제육덮밥",
+      "nutrient_name": {
+        "kcal": 620,
+        "carbs": 82,
+        "protein": 28,
+        "fat": 20,
+        "sugar": 9,
+        "sodium": 980,
+        "cholesterol": 85,
+        "kalium": 520,
+        "phos": 260
+      }
+    },
+    {
+      "food_name": "된장국",
+      "nutrient_name": {
+        "kcal": 90,
+        "carbs": 8,
+        "protein": 7,
+        "fat": 3,
+        "sugar": 2,
+        "sodium": 760,
+        "cholesterol": 5,
+        "kalium": 280,
+        "phos": 120
+      }
+    }
+  ]
+}
+
+### 분석 테스트 2 - 연어덮밥 + 샐러드
+POST http://localhost:8080/api/meals/analyze?userId=zoo
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "연어덮밥",
+      "nutrient_name": {
+        "kcal": 520,
+        "carbs": 72,
+        "protein": 26,
+        "fat": 14,
+        "sugar": 5,
+        "sodium": 520,
+        "cholesterol": 70,
+        "kalium": 580,
+        "phos": 280
+      }
+    },
+    {
+      "food_name": "샐러드",
+      "nutrient_name": {
+        "kcal": 150,
+        "carbs": 12,
+        "protein": 6,
+        "fat": 8,
+        "sugar": 4,
+        "sodium": 180,
+        "cholesterol": 10,
+        "kalium": 430,
+        "phos": 110
+      }
+    }
+  ]
+}
+
+### 분석 테스트 3 - 라면 + 김치
+POST http://localhost:8080/api/meals/analyze?userId=shin
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "라면",
+      "nutrient_name": {
+        "kcal": 520,
+        "carbs": 78,
+        "protein": 12,
+        "fat": 18,
+        "sugar": 4,
+        "sodium": 1800,
+        "cholesterol": 15,
+        "kalium": 250,
+        "phos": 180
+      }
+    },
+    {
+      "food_name": "김치",
+      "nutrient_name": {
+        "kcal": 30,
+        "carbs": 5,
+        "protein": 2,
+        "fat": 0.5,
+        "sugar": 2,
+        "sodium": 700,
+        "cholesterol": 0,
+        "kalium": 180,
+        "phos": 40
+      }
+    }
+  ]
+}
+
+### 분석 테스트 4 - 고구마 + 바나나
+POST http://localhost:8080/api/meals/analyze?userId=shin
+Content-Type: application/json
+
+{
+  "detectedFoods": [
+    {
+      "food_name": "고구마",
+      "nutrient_name": {
+        "kcal": 200,
+        "carbs": 30,
+        "protein": 3,
+        "fat": 5,
+        "sugar": 7,
+        "sodium": 20,
+        "cholesterol": 0,
+        "kalium": 900,
+        "phos": 90
+      }
+    },
+    {
+      "food_name": "바나나",
+      "nutrient_name": {
+        "kcal": 180,
+        "carbs": 27,
+        "protein": 2,
+        "fat": 5,
+        "sugar": 8,
+        "sodium": 5,
+        "cholesterol": 0,
+        "kalium": 850,
+        "phos": 80
+      }
+    }
+  ]
+}
+

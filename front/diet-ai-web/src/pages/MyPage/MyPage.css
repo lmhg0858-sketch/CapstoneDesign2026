@@ -1,0 +1,46 @@
+.mypage__card {
+  animation: mypage-card-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mypage__row {
+  align-items: center;
+  gap: 16px;
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f8fbff, #dbe6ff 55%, #b0c9ff 100%);
+  border: 1px solid rgba(61, 89, 147, 0.12);
+  box-shadow:
+    inset 0 8px 16px rgba(255, 255, 255, 0.88),
+    0 16px 28px rgba(30, 49, 89, 0.12);
+  animation: avatar-float 4.8s ease-in-out infinite;
+}
+
+@keyframes mypage-card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes avatar-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
