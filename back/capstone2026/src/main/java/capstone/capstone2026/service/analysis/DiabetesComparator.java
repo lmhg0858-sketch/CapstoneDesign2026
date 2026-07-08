@@ -2,30 +2,35 @@ package capstone.capstone2026.service.analysis;
 
 import capstone.capstone2026.domain.User;
 import capstone.capstone2026.dto.FoodAnalysisRequest;
+import capstone.capstone2026.dto.AnalysisResult;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DiabetesComparator implements DiseaseComparator {
-    @Override
-    public String getDiseaseName() { return "당뇨"; }
+    @Override public String getDiseaseName() { return "당뇨"; }
 
     @Override
-    public String evaluate(FoodAnalysisRequest.NutrientData n, User user) {
-        if (n.getKcal() <= 0) return "안전";
+    public AnalysisResult evaluate(FoodAnalysisRequest.NutrientData n, User user) {
+        AnalysisResult res = new AnalysisResult(getDiseaseName());
+        if (n.getKcal() <= 0) { res.calculateFinal(100); return res; }
 
-        // 표준체중 기반 한 끼 권장 칼로리 계산
-        double heightInMeters = user.getHeight() / 100.0;
-        double standardWeight = ("MALE".equalsIgnoreCase(user.getGender()) || "남성".equals(user.getGender())) 
-                                ? Math.pow(heightInMeters, 2) * 22 : Math.pow(heightInMeters, 2) * 21;
-        double mealLimit = (standardWeight * 30.0) / 3.0;
+        double h = user.getHeight() / 100.0;
+        double sw = ("MALE".equalsIgnoreCase(user.getGender()) || "남성".equals(user.getGender())) ? Math.pow(h, 2) * 22 : Math.pow(h, 2) * 21;
+        double limit = (sw * 30.0) / 3.0;
 
-        double carbPct = (n.getCarbs() * 4 / n.getKcal()) * 100;
-        double fatPct = (n.getFat() * 9 / n.getKcal()) * 100;
-        double proteinPct = (n.getProtein() * 4 / n.getKcal()) * 100;
+        double cPct = (n.getCarbs() * 4 / n.getKcal()) * 100;
+        double fPct = (n.getFat() * 9 / n.getKcal()) * 100;
 
-        if (carbPct < 50 || carbPct > 70 || fatPct < 10 || fatPct > 45 || proteinPct < 5 || proteinPct > 40 || n.getSugar() >= 20 || n.getSodium() >= 800 || n.getKcal() > (mealLimit + 100)) return "위험";
-        if (carbPct < 55 || carbPct > 65 || fatPct < 20 || fatPct > 35 || proteinPct < 10 || proteinPct > 35 || n.getSugar() >= 16 || n.getSodium() >= 750 || n.getKcal() > mealLimit) return "주의";
+        int cS = (cPct < 50 || cPct > 70) ? 0 : (cPct < 55 || cPct > 65 ? 50 : 100);
+        int fS = (fPct < 10 || fPct > 45) ? 0 : (fPct < 20 || fPct > 35 ? 50 : 100);
+        int sS = (n.getSugar() >= 20) ? 0 : (n.getSugar() >= 16 ? 50 : 100);
+        int kS = (n.getKcal() > limit + 100) ? 0 : (n.getKcal() > limit ? 50 : 100);
 
-        return "안전";
+        res.addNutrient("탄수화물", cS);
+        res.addNutrient("지방", fS);
+        res.addNutrient("당", sS);
+        res.addNutrient("칼로리", kS);
+        res.calculateFinal(cS * 0.3 + fS * 0.2 + sS * 0.3 + kS * 0.2);
+        return res;
     }
 }

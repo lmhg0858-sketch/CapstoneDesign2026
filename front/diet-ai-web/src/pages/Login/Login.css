@@ -1,94 +1,143 @@
-﻿.login-page {
+.login-page {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(340px, 420px) minmax(360px, 1fr);
+  grid-template-columns: minmax(380px, 470px) minmax(420px, 1fr);
   gap: 28px;
-  align-items: center;
-  padding: 24px 32px;
-  background: #efefef;
+  align-items: stretch;
+  padding: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(102, 154, 255, 0.12), transparent 26%),
+    linear-gradient(180deg, #f7f8fc 0%, #eff2f9 100%);
 }
 
 .login-page .auth-panel {
-  background: #efefef;
-  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 36px 34px;
+  border: 1px solid rgba(25, 39, 66, 0.09);
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow:
+    0 20px 48px rgba(17, 26, 44, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px);
+  animation: auth-rise 0.8s ease-out both;
 }
 
 .login-page .auth-title {
-  margin: 0 0 20px;
-  font-size: 30px;
-  letter-spacing: -0.02em;
-  font-weight: 700;
+  margin: 0 0 24px;
+  font-size: clamp(34px, 4vw, 52px);
+  letter-spacing: -0.06em;
+  font-weight: 800;
+  color: #111827;
 }
 
 .login-page .auth-form {
   display: grid;
-  gap: 6px;
+  gap: 10px;
 }
 
 .login-page .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-  font-size: 12px;
-  color: #1d1d1d;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
 }
 
 .login-page .field input {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #d9d9d9;
-  background: #fff;
-  font-size: 12px;
+  min-height: 54px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(247, 249, 253, 0.92);
+  font-size: 14px;
+  color: #0f172a;
+  outline: none;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.login-page .field input:focus {
+  border-color: rgba(91, 133, 255, 0.48);
+  box-shadow: 0 0 0 4px rgba(91, 133, 255, 0.12);
+  transform: translateY(-1px);
 }
 
 .login-page .auth-submit {
   width: 100%;
-  margin-top: 4px;
-  border-radius: 8px;
-  background: #3f5f29;
-  font-size: 13px;
-  padding: 10px 14px;
+  margin-top: 8px;
+  min-height: 54px;
+  border-radius: 999px;
+  font-size: 15px;
+  padding: 12px 18px;
 }
 
 .login-page .auth-switch {
-  margin: 16px 0 0;
+  margin: 18px 0 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
+  color: #6b7280;
 }
 
 .login-page .auth-switch a {
-  color: #3552a5;
+  color: #2448b7;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .login-page .auth-visual {
-  width: min(100%, 900px);
-  min-height: min(84vh, 720px);
-  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 34px;
+  min-height: calc(100vh - 56px);
   background-size: cover;
   background-position: center;
-  justify-self: end;
+  box-shadow: 0 24px 50px rgba(18, 30, 61, 0.16);
+  animation: auth-rise 1s ease-out both;
+}
+
+.login-page .auth-visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(9, 14, 24, 0.12), rgba(9, 14, 24, 0.44)),
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.22), transparent 34%);
+}
+
+@keyframes auth-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 @media (max-width: 1100px) {
   .login-page {
     grid-template-columns: 1fr;
-    padding: 20px;
-    gap: 16px;
+    padding: 18px;
+    gap: 18px;
   }
 
   .login-page .auth-panel {
-    padding: 18px;
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.86);
+    order: 2;
+    padding: 28px 22px;
+    border-radius: 28px;
   }
 
   .login-page .auth-visual {
-    min-height: 360px;
-    border-radius: 16px;
-    width: 100%;
+    order: 1;
+    min-height: 320px;
+    border-radius: 28px;
   }
 }
-

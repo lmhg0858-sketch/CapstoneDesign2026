@@ -2,10 +2,10 @@
 
 function MyPage() {
   return (
-    <section className="page">
+    <section className="page mypage">
       <h1 className="page__title">마이페이지</h1>
-      <div className="card">
-        <div className="row" style={{ alignItems: 'center', gap: '16px' }}>
+      <div className="card mypage__card">
+        <div className="row mypage__row">
           <div className="avatar" />
           <div className="list">
             <strong>회원 정보</strong>
