@@ -25,10 +25,13 @@
 ### 3. 하루 위험도 요약
 - 오늘 섭취한 음식 기록을 바탕으로 하루 식단의 위험도를 요약합니다.
 - 위험 음식과 주의 음식 개수를 기준으로 현재 식단 상태를 확인할 수 있습니다.
+<img width="359" height="178" alt="image" src="https://github.com/user-attachments/assets/80662a18-e03e-4732-8c1c-cf08d7b1210f" />
+<img width="392" height="180" alt="image" src="https://github.com/user-attachments/assets/7745defb-e02e-400e-98db-747d06f03349" />
+
 ### 4. 대시보드 제공
 - 사용자의 누적 영양 섭취량을 확인할 수 있습니다.
 - 질환별 권장 기준과 비교하여 식단 관리에 도움을 줍니다.
-<img width="355" height="420" alt="image" src="https://github.com/user-attachments/assets/755089d7-d4e2-4dfe-8afc-f89699260e97" />
+
 
 
 ### 5. 랭킹 기능
