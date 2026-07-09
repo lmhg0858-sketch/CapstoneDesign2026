@@ -13,6 +13,8 @@
 ### 1. 음식 사진 기반 영양 정보 분석
 - 사용자가 음식 이미지를 업로드하면 AI 서버에서 음식 정보를 분석합니다.
 - 분석된 음식의 칼로리, 탄수화물, 단백질, 지방, 당류, 나트륨 등의 영양 정보를 제공합니다.
+<img width="454" height="485" alt="image" src="https://github.com/user-attachments/assets/b594b4e5-bdd4-4822-a420-56fa69271a8c" />
+<img width="421" height="335" alt="image" src="https://github.com/user-attachments/assets/58dc8451-e857-40ed-b793-171dd3ccb922" />
 
 ### 2. 사용자 질환 기반 위험도 판단
 - 사용자가 보유한 질환 정보를 기준으로 음식의 위험도를 평가합니다.
