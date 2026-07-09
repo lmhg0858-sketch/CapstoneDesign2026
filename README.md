@@ -33,6 +33,8 @@
 ### 5. 랭킹 기능
 - 사용자별 식단 점수를 기반으로 랭킹을 제공합니다.
 - 건강한 식습관 관리를 위한 동기부여 요소로 활용됩니다.
+<img width="1176" height="1230" alt="image" src="https://github.com/user-attachments/assets/8dcc0f41-11c6-449b-bf94-9d63e2aab93a" />
+
 
 ## 기술 스택
 
