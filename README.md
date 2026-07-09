@@ -31,8 +31,8 @@
 ### 4. 대시보드 제공
 - 사용자의 누적 영양 섭취량을 확인할 수 있습니다.
 - 질환별 권장 기준과 비교하여 식단 관리에 도움을 줍니다.
-
-
+<img width="365" height="241" alt="image" src="https://github.com/user-attachments/assets/23790351-f6df-441a-a973-3b97a994464d" />
+<img width="398" height="251" alt="image" src="https://github.com/user-attachments/assets/a654e5de-5ed8-429c-b031-73754cb32860" />
 
 ### 5. 랭킹 기능
 - 사용자별 식단 점수를 기반으로 랭킹을 제공합니다.
